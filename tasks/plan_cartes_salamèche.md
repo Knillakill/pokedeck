@@ -157,7 +157,7 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 ---
 
-#### PEUR PANIQUE *(Scary Face)*
+#### GRIMACE *(Scary Face)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
 - **Effet** : Applique **Effroi** : l'ennemi passe son prochain tour. S'épuise.
 - **Effet+** : Ne s'épuise plus.
