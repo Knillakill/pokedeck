@@ -90,4 +90,16 @@ export abstract class Entity {
 
         return Math.max(0, dmg);
     }
+
+    /** Calcule le bloc effectivement gagné (avec Dextérité) sans l'appliquer. */
+    calcOutgoingBlock(base: number): number {
+        const dex = this.statuses.get(StatusEffectId.DEXTERITY);
+        return dex ? Math.max(0, dex.modifyBlockGained(base)) : base;
+    }
+
+    /** Calcule les dégâts reçus après Vulnérabilité, sans bloc ni mutation. */
+    calcIncomingDamage(raw: number): number {
+        const vuln = this.statuses.get(StatusEffectId.VULNERABLE);
+        return vuln ? Math.max(0, vuln.modifyDamageReceived(raw)) : raw;
+    }
 }

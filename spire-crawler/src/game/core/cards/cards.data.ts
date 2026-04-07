@@ -1,5 +1,7 @@
 import { CardDefinition } from './CardDefinition';
 import { CardType, CardRarity, CardTarget, CardEffectType, StatusEffectId } from '../types';
+import { registerSalamecheCards, SALAMECHE_CARD_IDS } from './salameche_cards.data';
+export { SALAMECHE_CARD_IDS };
 
 // ─── 4 Cartes d'Attaque ───────────────────────────────────────────────────────
 
@@ -214,6 +216,8 @@ export function registerAllCards(): void {
         growl, synthesis, harden, growth,
         toxic, sleepPowder,
     ].forEach((card) => CardDefinition.register(card));
+
+    registerSalamecheCards();
 }
 
 export const ATTACK_CARD_IDS = ['vine_whip', 'razor_leaf', 'tackle', 'solar_beam'];

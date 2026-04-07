@@ -190,16 +190,20 @@ export class CombatEngine {
         this.startEnemyTurn();
     }
 
+    // File d'ennemis à traiter ce tour — BattleScene les dépile un par un.
+    private enemyTurnQueue: Enemy[] = [];
+
     private startEnemyTurn(): void {
         this.setPhase(CombatPhase.ENEMY_TURN);
 
+        // Préparer tous les ennemis : reset blocs + ticks de statuts
+        // (les dégâts de poison/regen sont appliqués ici immédiatement)
+        this.enemyTurnQueue = [];
         for (const enemy of this.enemies) {
             if (enemy.isDead) continue;
 
-            // Bloc ennemi remis à zéro
             enemy.removeBlockAtTurnStart();
 
-            // Vérifier si l'ennemi est endormi AVANT les effets de statut
             const sleepEffect = enemy.statuses.get(StatusEffectId.SLEEP);
             if (sleepEffect && sleepEffect.stacks > 0) {
                 this.addLog(`${enemy.name} dort et ne peut pas agir !`);
@@ -209,26 +213,44 @@ export class CombatEngine {
                 continue;
             }
 
-            // Effets de statut ennemi (poison, regen, etc.)
             for (const effect of enemy.statuses.values()) {
                 effect.onTurnStart(enemy.id, this);
             }
             enemy.removeExpiredStatuses();
 
-            // Résolution du move
-            this.resolveEnemyMove(enemy);
-            enemy.advanceMove();
+            if (!enemy.isDead) this.enemyTurnQueue.push(enemy);
+        }
+        // BattleScene commence le traitement séquentiel via resolveNextEnemy()
+    }
+
+    /**
+     * Traite le prochain ennemi dans la file.
+     * Appelé par BattleScene après chaque animation (une fois par ennemi).
+     * Renvoie true s'il reste des ennemis à traiter.
+     */
+    resolveNextEnemy(): boolean {
+        if (this.phase !== CombatPhase.ENEMY_TURN) return false;
+
+        if (this.enemyTurnQueue.length === 0) {
+            this.checkDefeat();
+            if (this.phase === CombatPhase.ENEMY_TURN) {
+                this.startPlayerTurn();
+            }
+            return false;
         }
 
+        const enemy = this.enemyTurnQueue.shift()!;
+        this.resolveEnemyMove(enemy);
+        enemy.advanceMove();
         this.checkDefeat();
-        if (this.phase === CombatPhase.ENEMY_TURN) {
-            this.startPlayerTurn();
-        }
+
+        return this.phase === CombatPhase.ENEMY_TURN && this.enemyTurnQueue.length > 0;
     }
 
     private resolveEnemyMove(enemy: Enemy): void {
         const move = enemy.nextMove;
         this.addLog(`${enemy.name} utilise ${move.name}`);
+        this.emit('enemy_action', { enemyId: enemy.id });
 
         for (const effect of move.effects) {
             switch (effect.type) {

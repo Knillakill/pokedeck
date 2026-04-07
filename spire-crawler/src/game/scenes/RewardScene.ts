@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 import { RunManager } from '../core/RunManager';
 import { CardInstance } from '../core/cards/CardInstance';
 import { CardView } from '../ui/CardView';
-import { ALL_CARD_IDS } from '../core/cards/cards.data';
+import { ALL_CARD_IDS, SALAMECHE_CARD_IDS } from '../core/cards/cards.data';
 
 export interface RewardSceneData {
     nodeId: string;
@@ -60,8 +60,9 @@ export class RewardScene extends Scene {
     }
 
     private generateRewardCards(_isElite = false, _isBoss = false): CardInstance[] {
-        const allIds = [...ALL_CARD_IDS];
-        const shuffled = allIds.sort(() => Math.random() - 0.5);
+        const characterId = RunManager.instance.characterId;
+        const pool = characterId === 'salamèche' ? [...SALAMECHE_CARD_IDS] : [...ALL_CARD_IDS];
+        const shuffled = pool.sort(() => Math.random() - 0.5);
         return shuffled.slice(0, 3).map(id => new CardInstance(id));
     }
 

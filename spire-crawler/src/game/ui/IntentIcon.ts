@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { IntentType } from '../core/types';
 import { sc, fz } from '../config';
 
-const ICON_SIZE = sc(32);
+const ICON_SIZE = sc(54);   // était 32 — beaucoup plus lisible
 
 const INTENT_COLORS: Record<IntentType, number> = {
     [IntentType.ATTACK]:        0xe74c3c,
@@ -63,17 +63,21 @@ export class IntentIcon extends Phaser.GameObjects.Container {
         this.gfx = scene.add.graphics();
 
         this.label = scene.add.text(0, -2, '?', {
-            fontSize: fz(14),
+            fontSize: fz(22),
             fontFamily: 'sans-serif',
+            fontStyle: 'bold',
             color: '#ffffff',
         }).setOrigin(0.5);
 
-        this.dmgText = scene.add.text(0, ICON_SIZE / 2 + 8, '', {
-            fontSize: fz(11),
+        // Dégâts : très visible, gros et rouge vif
+        this.dmgText = scene.add.text(0, ICON_SIZE / 2 + 14, '', {
+            fontSize: fz(22),
             fontFamily: 'Georgia, serif',
-            color: '#e74c3c',
+            fontStyle: 'bold',
+            color: '#ff4444',
             stroke: '#000',
-            strokeThickness: 2,
+            strokeThickness: 4,
+            resolution: 2,
         }).setOrigin(0.5);
 
         this.tooltip = this.buildTooltip(scene);
@@ -165,7 +169,8 @@ export class IntentIcon extends Phaser.GameObjects.Container {
             || intent === IntentType.ATTACK_BUFF
             || intent === IntentType.ATTACK_DEBUFF;
 
-        this.dmgText.setText(damage && damage > 0 && isAttack ? `${damage} dégâts` : '');
+        // Affiche "⚔ 12" pour les attaques, rien sinon
+        this.dmgText.setText(damage && damage > 0 && isAttack ? `⚔ ${damage}` : '');
 
         this.refreshTooltip();
         this.tooltip.setDepth(50);

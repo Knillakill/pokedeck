@@ -109,7 +109,7 @@ export class MapScene extends Scene {
                 case NodeType.ELITE:
                 case NodeType.BOSS:
                     this.scene.start('BattleScene', {
-                        enemyIds: [node.enemyId!],
+                        enemyIds: node.enemyIds ?? [],
                         nodeId: node.id,
                         isElite: node.type === NodeType.ELITE,
                         isBoss: node.type === NodeType.BOSS,

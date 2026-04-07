@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
 import { CardInstance } from '../core/cards/CardInstance';
-import { CardType } from '../core/types';
+import { CardType, CardEffectType } from '../core/types';
 import { CardModal } from './CardModal';
 import { sc, fz } from '../config';
+import type { Entity } from '../core/entities/Entity';
 
 const CARD_W   = sc(190);
 const CARD_H   = sc(265);
@@ -70,6 +71,10 @@ export class CardView extends Phaser.GameObjects.Container {
     private baseRotation = 0;
     private baseDepth = 1;
     private usingImage = false;
+
+    // ── Contexte de preview combat ────────────────────────────────────────────
+    private previewPlayer: Entity | null = null;
+    private previewTarget: Entity | null = null;
 
     static readonly WIDTH  = CARD_W;
     static readonly HEIGHT = CARD_H;
@@ -286,6 +291,77 @@ export class CardView extends Phaser.GameObjects.Container {
         this.setDepth(this.baseDepth);
     }
 
+    // ─── Preview valeurs combat ───────────────────────────────────────────────
+
+    /**
+     * Met à jour le contexte de preview.
+     * - player    : entité joueur (pour STRENGTH / WEAK / DEXTERITY)
+     * - targetEnemy : ennemi ciblé (pour VULNERABLE)
+     * Passer null/null pour revenir à la description de base.
+     */
+    updatePreview(player: Entity | null, targetEnemy: Entity | null): void {
+        this.previewPlayer = player;
+        this.previewTarget = targetEnemy;
+        this.applyPreview();
+    }
+
+    private applyPreview(): void {
+        const player = this.previewPlayer;
+        const target = this.previewTarget;
+
+        const def     = this.card.definition;
+        const effects = this.card.upgraded ? def.getUpgradedEffects() : def.effects;
+
+        let text    = this.card.description;
+        let hasUp   = false;
+        let hasDown = false;
+
+        if (player) {
+            for (const eff of effects) {
+                if (eff.type === CardEffectType.DEAL_DAMAGE && eff.value !== undefined) {
+                    const base     = eff.value;
+                    const outgoing = player.calcOutgoingDamage(base);
+                    const final    = target ? target.calcIncomingDamage(outgoing) : outgoing;
+                    if (final !== base) {
+                        // Remplace la première occurrence du nombre exact dans la description
+                        text = text.replace(new RegExp(`\\b${base}\\b`), String(final));
+                        if (final > base) hasUp   = true;
+                        else              hasDown = true;
+                    }
+                }
+                if (eff.type === CardEffectType.GAIN_BLOCK && eff.value !== undefined) {
+                    const base  = eff.value;
+                    const final = player.calcOutgoingBlock(base);
+                    if (final !== base) {
+                        text = text.replace(new RegExp(`\\b${base}\\b`), String(final));
+                        if (final > base) hasUp   = true;
+                        else              hasDown = true;
+                    }
+                }
+            }
+        }
+
+        this.descText.setText(text);
+
+        // Couleur de la description : rouge si affaibli, vert si boosté, défaut sinon
+        if (hasDown) {
+            this.descText.setColor('#e74c3c');
+            this.descText.setStroke(this.usingImage ? '#3b0000' : '#000', 1);
+        } else if (hasUp) {
+            this.descText.setColor('#27ae60');
+            this.descText.setStroke(this.usingImage ? '#003300' : '#000', 1);
+        } else {
+            // Restaure les couleurs par défaut selon le mode de rendu
+            if (this.usingImage) {
+                this.descText.setColor(this.card.upgraded ? '#006622' : '#2c1a00');
+                this.descText.setStroke(this.card.upgraded ? '#ccffcc' : '#f5deb3', 1);
+            } else {
+                this.descText.setColor(this.card.upgraded ? '#55ff88' : '#ecf0f1');
+                this.descText.setStroke('#000', 1);
+            }
+        }
+    }
+
     // ─── Méthodes publiques ───────────────────────────────────────────────────
 
     /** Applique le layout fan (rotation + profondeur) assigné par la scène. */
@@ -309,16 +385,40 @@ export class CardView extends Phaser.GameObjects.Container {
         this.nameText.setText(card.name);
         this.descText.setText(card.description);
         this.draw();
+        this.applyPreview(); // Re-applique le preview après mise à jour de la carte
     }
 
-    playCardAnimation(onComplete: () => void): void {
-        this.scene.tweens.add({
-            targets: this,
-            y: this.y - 80,
-            alpha: 0,
-            duration: 300,
-            ease: 'Power2',
-            onComplete,
-        });
+    /**
+     * Joue la carte :
+     *  - Avec targetX/Y (carte attaque) : vole vers la cible avant de disparaître.
+     *  - Sans                           : monte + fade (compétences/pouvoirs).
+     */
+    playCardAnimation(onComplete: () => void, targetX?: number, targetY?: number): void {
+        if (targetX !== undefined && targetY !== undefined) {
+            // Vol vers la cible
+            this.scene.tweens.add({
+                targets: this,
+                x: targetX,
+                y: targetY - 20,
+                scaleX: 0.35,
+                scaleY: 0.35,
+                rotation: 0,
+                alpha: 0,
+                duration: 300,
+                ease: 'Cubic.easeIn',
+                onComplete,
+            });
+        } else {
+            this.scene.tweens.add({
+                targets: this,
+                y: this.y - 90,
+                scaleX: 1.08,
+                scaleY: 1.08,
+                alpha: 0,
+                duration: 300,
+                ease: 'Power2',
+                onComplete,
+            });
+        }
     }
 }

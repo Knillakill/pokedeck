@@ -171,7 +171,7 @@ export interface MapNode {
     type: NodeType;
     row: number;
     col: number;
-    enemyId?: string;
+    enemyIds?: string[]; // liste d'ennemis pour le combat
     connections: string[];
     completed: boolean;
 }
@@ -210,7 +210,8 @@ export type CombatEventType =
     | 'player_died'
     | 'combat_victory'
     | 'combat_defeat'
-    | 'log_entry';
+    | 'log_entry'
+    | 'enemy_action'; // { enemyId: string } — déclenche l'animation d'action
 
 export interface CombatEvent {
     type: CombatEventType;

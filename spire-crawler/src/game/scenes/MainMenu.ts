@@ -1,5 +1,4 @@
 import { Scene } from 'phaser';
-import { RunManager } from '../core/RunManager';
 
 export class MainMenu extends Scene {
     constructor() {
@@ -40,10 +39,9 @@ export class MainMenu extends Scene {
 
         // Bouton Jouer
         this.makeButton(cx, cy - 20, 'Nouvelle Partie', 0x27ae60, 0x2ecc71, () => {
-            RunManager.startNewRun('bulbizarre');
             this.cameras.main.fadeOut(400, 0, 0, 0);
             this.cameras.main.once('camerafadeoutcomplete', () => {
-                this.scene.start('MapScene');
+                this.scene.start('CharacterSelect');
             });
         });
 
