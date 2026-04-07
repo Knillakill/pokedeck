@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { sc } from '../config';
 import { CombatEngine } from '../core/combat/CombatEngine';
 import { RunManager } from '../core/RunManager';
 import { CardView } from '../ui/CardView';
@@ -26,19 +27,20 @@ let PLAYER_SPRITE_X = 300;
 //   attaque.gif   : personnage 48×53 px dans canvas 192×192 → 27 % du canvas
 //   competence.gif: identique
 // display_action = display_idle_H × (192/53) ≈ 3.62  →  personnages à la même taille
-const BULBI_IDLE_H    = 130;
-const BULBI_IDLE_W    = Math.round(45 * BULBI_IDLE_H / 49); // ≈ 119 px
-const BULBI_ACTION_SZ = Math.round(BULBI_IDLE_H * 192 / 53);// ≈ 471 px
+// Tailles calibrées pour 1024×768 (ratio ≈ 0.538 vs 1920×1080)
+const BULBI_IDLE_H    = 70;
+const BULBI_IDLE_W    = Math.round(45 * BULBI_IDLE_H / 49); // ≈ 64 px
+const BULBI_ACTION_SZ = Math.round(BULBI_IDLE_H * 192 / 53);// ≈ 253 px
 const BULBI_GIF_BOX   = BULBI_ACTION_SZ;              // wrapper carré = taille max
-const BULBI_Y_OFFSET  = Math.round(BULBI_GIF_BOX / 2 - BULBI_IDLE_H / 2); // ≈ 170 px
-const BULBI_ACTION_FEET_OFFSET = BULBI_ACTION_SZ - Math.round(163 * BULBI_ACTION_SZ / 192); // ≈ 71 px
+const BULBI_Y_OFFSET  = Math.round(BULBI_GIF_BOX / 2 - BULBI_IDLE_H / 2); // ≈ 92 px
+const BULBI_ACTION_FEET_OFFSET = BULBI_ACTION_SZ - Math.round(163 * BULBI_ACTION_SZ / 192); // ≈ 38 px
 
 // ── Salamèche GIF — même approche DOM que Bulbizarre ────────────────────────
 // Les GIFs sont dans assets/salameche/sprite/ : idle.gif, attaque.gif, competence.gif
-// Dimensions estimées similaires à Bulbizarre — à ajuster si besoin.
-const SALAM_IDLE_H    = 130;
-const SALAM_IDLE_W    = 100;
-const SALAM_ACTION_SZ = 300;
+// Tailles calibrées pour 1024×768
+const SALAM_IDLE_H    = 70;
+const SALAM_IDLE_W    = 55;
+const SALAM_ACTION_SZ = 160;
 const SALAM_GIF_BOX   = SALAM_ACTION_SZ;
 const SALAM_Y_OFFSET  = Math.round(SALAM_GIF_BOX / 2 - SALAM_IDLE_H / 2); // ≈ 85 px
 // Durées estimées des animations (ms) — à calibrer sur les GIFs réels
@@ -151,7 +153,8 @@ export class BattleScene extends Scene {
         }
 
         // Overlay semi-transparent sur la zone cartes pour les rendre lisibles
-        const cardTopY = height - 185;
+        // sc(142) ≈ 185/1.3 — se redimensionne avec S
+        const cardTopY = height - sc(142);
         const cardStrip = this.add.graphics();
         cardStrip.fillStyle(0x000000, 0.45);
         cardStrip.fillRect(0, cardTopY, width, height - cardTopY);
@@ -260,7 +263,7 @@ export class BattleScene extends Scene {
                 'position:absolute;bottom:0px;left:50%;' +
                 'transform:translateX(-50%) scaleX(-1);' +
                 `width:${BULBI_IDLE_W}px;height:${BULBI_IDLE_H}px;` +
-                'image-rendering:pixelated;display:block;';
+                'image-rendering:auto;display:block;';
 
             // ── img action : taille fixe permanente, cachée. Le src change PENDANT
             //    qu'elle est cachée → jamais de flash de taille incorrecte.
@@ -269,7 +272,7 @@ export class BattleScene extends Scene {
                 `position:absolute;bottom:-${BULBI_ACTION_FEET_OFFSET}px;left:50%;` +
                 'transform:translateX(-50%) scaleX(-1);' +
                 `width:${BULBI_ACTION_SZ}px;height:${BULBI_ACTION_SZ}px;` +
-                'image-rendering:pixelated;display:none;';
+                'display:none;';
 
             wrapper.appendChild(imgIdle);
             wrapper.appendChild(imgAction);
@@ -312,14 +315,14 @@ export class BattleScene extends Scene {
                 'position:absolute;bottom:0px;left:50%;' +
                 'transform:translateX(-50%) scaleX(-1);' +
                 `width:${SALAM_IDLE_W}px;height:${SALAM_IDLE_H}px;` +
-                'image-rendering:pixelated;display:block;';
+                'display:block;';
 
             const imgAction = document.createElement('img');
             imgAction.style.cssText =
                 'position:absolute;bottom:0px;left:50%;' +
                 'transform:translateX(-50%) scaleX(-1);' +
                 `width:${SALAM_ACTION_SZ}px;height:${SALAM_ACTION_SZ}px;` +
-                'image-rendering:pixelated;display:none;';
+                'display:none;';
 
             wrapper.appendChild(imgIdle);
             wrapper.appendChild(imgAction);

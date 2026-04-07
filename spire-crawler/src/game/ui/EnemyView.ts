@@ -9,13 +9,16 @@ import { StatusEffect } from '../core/effects/StatusEffect';
 const ENEMY_W = sc(130);
 const ENEMY_H = sc(160);
 
-// Sprite idle : boîte fixe 130×130
-const GIF_BOX  = 130;
+// Sprite idle : boîte fixe — calibrée pour 1024×768 (ratio ≈ 0.538 vs 1920×1080)
+const GIF_BOX  = 70;
 const GIF_HALF = GIF_BOX / 2;
 
 // Animations d'action
-const ACTION_GIF_SZ      = 460;
-const ACTION_FEET_OFFSET = 75;
+const ACTION_GIF_SZ      = 245;
+const ACTION_FEET_OFFSET = 40;
+
+// Échelle des sprites spritesheet (non-GIF) — calibrée pour 1024×768
+const SPRITE_SCALE = 2.0;
 
 interface EnemyGifCfg {
     idlePath?:        string;
@@ -95,7 +98,7 @@ export class EnemyView extends Phaser.GameObjects.Container {
         const texKey  = `enemy_sprite_${enemy.definition.id}`;
         const gifCfg  = ENEMY_GIF[enemy.definition.id];
         this.usingSprite = !gifCfg && scene.textures.exists(texKey);
-        const sh = gifCfg ? GIF_HALF : (this.usingSprite ? Math.round(80 * 3.6 / 2) : ENEMY_H / 2);
+        const sh = gifCfg ? GIF_HALF : (this.usingSprite ? Math.round(80 * SPRITE_SCALE / 2) : ENEMY_H / 2);
 
         // ── Corps / sprite ───────────────────────────────────────────────────
         this.gfxBody = scene.add.graphics();
@@ -106,7 +109,7 @@ export class EnemyView extends Phaser.GameObjects.Container {
                 imgIdle.src = gifCfg.idlePath;
                 imgIdle.style.cssText =
                     `width:${GIF_BOX}px;height:${GIF_BOX}px;` +
-                    'object-fit:contain;image-rendering:pixelated;' +
+                    'object-fit:contain;' +
                     'pointer-events:none;display:block;';
                 this.gifIdleDom = scene.add.dom(x, y, imgIdle).setDepth(4);
                 if (this.gifIdleDom.node.parentElement)
@@ -126,7 +129,7 @@ export class EnemyView extends Phaser.GameObjects.Container {
                     `position:absolute;bottom:-${ACTION_FEET_OFFSET}px;left:50%;` +
                     'transform:translateX(-50%);' +
                     `width:${ACTION_GIF_SZ}px;height:${ACTION_GIF_SZ}px;` +
-                    'image-rendering:pixelated;display:none;';
+                    'display:none;';
                 wrapper.appendChild(imgAction);
                 const actionYOffset = Math.round(ACTION_GIF_SZ / 2 - GIF_HALF);
                 this.gifActionDom = scene.add.dom(x, y - actionYOffset, wrapper).setDepth(5);
@@ -141,7 +144,6 @@ export class EnemyView extends Phaser.GameObjects.Container {
             this.add(shadow);
 
         } else if (this.usingSprite) {
-            const SPRITE_SCALE = 3.6;
             scene.textures.get(texKey).setFilter(Phaser.Textures.FilterMode.LINEAR);
             const img = scene.add.image(0, 0, texKey).setScale(SPRITE_SCALE);
             const shadow = scene.add.graphics();
@@ -309,7 +311,7 @@ export class EnemyView extends Phaser.GameObjects.Container {
         if (!this.scene) return;
         const e    = this.enemy;
         const sh   = ENEMY_GIF[e.definition.id] ? GIF_HALF
-                   : this.usingSprite            ? Math.round(80 * 3.6 / 2)
+                   : this.usingSprite            ? Math.round(80 * SPRITE_SCALE / 2)
                    : ENEMY_H / 2;
         const ratio = Math.max(0, e.hp / e.maxHp);
 
