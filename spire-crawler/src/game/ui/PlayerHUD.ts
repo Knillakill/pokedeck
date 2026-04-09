@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Player } from '../core/entities/Player';
-import { sc, fz } from '../config';
+import { sc, fz, C } from '../config';
 import { StatusEffectId } from '../core/types';
 import { StatusEffect } from '../core/effects/StatusEffect';
 
@@ -115,11 +115,11 @@ export class PlayerHUD extends Phaser.GameObjects.Container {
         const bg    = scene.add.graphics();
         const title = scene.add.text(sc(8), sc(6), '', {
             fontSize: fz(13), fontFamily: 'Georgia, serif', fontStyle: 'bold',
-            color: '#ffffff', stroke: '#000', strokeThickness: 2, resolution: 2,
+            color: C.S_GOLD, stroke: '#000', strokeThickness: 2, resolution: 2,
         });
         const desc = scene.add.text(sc(8), sc(24), '', {
             fontSize: fz(11), fontFamily: 'Georgia, serif',
-            color: '#bdc3c7', stroke: '#000', strokeThickness: 1,
+            color: C.S_MUTED, stroke: '#000', strokeThickness: 1,
             wordWrap: { width: sc(190) }, resolution: 2,
         });
         ctn.add([bg, title, desc]);
@@ -138,10 +138,10 @@ export class PlayerHUD extends Phaser.GameObjects.Container {
         const W = sc(210);
         const h = sc(8) + titleTxt.height + descTxt.height + sc(14);
         bg.clear();
-        bg.fillStyle(0x0a0a14, 0.93);
-        bg.fillRoundedRect(0, 0, W, h, 7);
-        bg.lineStyle(1.5, 0x4a4a6a, 0.9);
-        bg.strokeRoundedRect(0, 0, W, h, 7);
+        bg.fillStyle(C.BG_PANEL, 0.95);
+        bg.fillRoundedRect(0, 0, W, h, sc(7));
+        bg.lineStyle(1.5, C.GOLD_BORDER, 0.85);
+        bg.strokeRoundedRect(0, 0, W, h, sc(7));
         const sw = this.scene.scale.width;
         const tx = screenX + W + 16 > sw ? screenX - W - 8 : screenX + 10;
         const ty = Math.max(8, screenY - h - 8);
@@ -248,9 +248,9 @@ export class PlayerHUD extends Phaser.GameObjects.Container {
         // Redimensionne le fond du panneau
         const panelContentH = Math.max(sc(46), sc(42) + dy + sc(8));
         this.panelBg.clear();
-        this.panelBg.fillStyle(0x000000, 0.80);
+        this.panelBg.fillStyle(C.BG_PANEL, 0.94);
         this.panelBg.fillRoundedRect(-FULL_W / 2 - 10, 0, FULL_W + 20, panelContentH, 10);
-        this.panelBg.lineStyle(1, 0x4a4a6a, 0.85);
+        this.panelBg.lineStyle(1.5, C.GOLD_BORDER, 0.65);
         this.panelBg.strokeRoundedRect(-FULL_W / 2 - 10, 0, FULL_W + 20, panelContentH, 10);
     }
 
@@ -353,6 +353,11 @@ export class BottomBar {
     private discardCountText!: Phaser.GameObjects.Text;
     private goldText: Phaser.GameObjects.Text;
 
+    /** Position centre de la pioche (coordonnées scène absolues). */
+    readonly deckPos:    { x: number; y: number };
+    /** Position centre de la défausse (coordonnées scène absolues). */
+    readonly discardPos: { x: number; y: number };
+
     private readonly sw: number;
     private readonly sh: number;
 
@@ -365,6 +370,9 @@ export class BottomBar {
         const pileY   = this.sh - PILE_H / 2 - sc(12);
         const drawX   = PILE_W / 2 + sc(20);
         const discX   = this.sw - PILE_W / 2 - sc(20);
+
+        this.deckPos    = { x: drawX, y: pileY };
+        this.discardPos = { x: discX, y: pileY };
 
         this.crystalGfx = scene.add.graphics().setDepth(10);
         const crystalY  = pileY - PILE_H / 2 - CRYSTAL_R * 1.6;
@@ -379,17 +387,17 @@ export class BottomBar {
 
         scene.add.text(drawX, pileY + PILE_H / 2 + sc(12), 'Pioche', {
             fontSize: fz(11), fontFamily: 'Georgia, serif',
-            color: '#bdc3c7', stroke: '#000', strokeThickness: 1, resolution: 2,
+            color: C.S_MUTED, stroke: '#000', strokeThickness: 1, resolution: 2,
         }).setOrigin(0.5).setDepth(10);
         scene.add.text(discX, pileY + PILE_H / 2 + sc(12), 'Défausse', {
             fontSize: fz(11), fontFamily: 'Georgia, serif',
-            color: '#bdc3c7', stroke: '#000', strokeThickness: 1, resolution: 2,
+            color: C.S_MUTED, stroke: '#000', strokeThickness: 1, resolution: 2,
         }).setOrigin(0.5).setDepth(10);
 
         this.goldText = scene.add.text(
             this.sw - sc(14), sc(14), '',
             { fontSize: fz(15), fontFamily: 'Georgia, serif',
-              color: '#f1c40f', stroke: '#000', strokeThickness: 2, resolution: 2 }
+              color: C.S_GOLD, stroke: '#000', strokeThickness: 2, resolution: 2 }
         ).setOrigin(1, 0).setDepth(10);
 
         this.refresh();
@@ -415,21 +423,23 @@ export class BottomBar {
             if (isDiscard) front.setTint(0x8899aa);
         } else {
             const g = this.scene.add.graphics().setDepth(10);
-            g.fillStyle(isDiscard ? 0x445566 : 0x224433, 1);
-            g.fillRoundedRect(x - PILE_W / 2, y - PILE_H / 2, PILE_W, PILE_H, 4);
-            g.lineStyle(1, 0x4a6a5a, 1);
-            g.strokeRoundedRect(x - PILE_W / 2, y - PILE_H / 2, PILE_W, PILE_H, 4);
+            g.fillStyle(isDiscard ? C.BG_SURFACE : C.BG_PANEL, 1);
+            g.fillRoundedRect(x - PILE_W / 2, y - PILE_H / 2, PILE_W, PILE_H, sc(6));
+            g.lineStyle(1, isDiscard ? C.PURPLE_SOFT : C.GOLD_DIM, 0.8);
+            g.strokeRoundedRect(x - PILE_W / 2, y - PILE_H / 2, PILE_W, PILE_H, sc(6));
         }
 
         const badgeX = x + PILE_W / 2 - sc(2);
         const badgeY = y + PILE_H / 2 - sc(2);
         const badgeBg = this.scene.add.graphics().setDepth(12);
-        badgeBg.fillStyle(0x000000, 0.82);
-        badgeBg.fillRoundedRect(badgeX - sc(18), badgeY - sc(14), sc(20), sc(16), 5);
+        badgeBg.fillStyle(C.BG_DEEP, 0.92);
+        badgeBg.fillRoundedRect(badgeX - sc(18), badgeY - sc(14), sc(22), sc(16), sc(5));
+        badgeBg.lineStyle(1, C.GOLD_DIM, 0.5);
+        badgeBg.strokeRoundedRect(badgeX - sc(18), badgeY - sc(14), sc(22), sc(16), sc(5));
 
-        return this.scene.add.text(badgeX - sc(8), badgeY - sc(6), '0', {
+        return this.scene.add.text(badgeX - sc(7), badgeY - sc(6), '0', {
             fontSize: fz(12), fontFamily: 'Georgia, serif', fontStyle: 'bold',
-            color: isDiscard ? '#aabbcc' : '#eeffee',
+            color: C.S_GOLD,
             stroke: '#000', strokeThickness: 2, resolution: 2,
         }).setOrigin(0.5).setDepth(13);
     }

@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { RunManager } from '../core/RunManager';
-import { sc, fz } from '../config';
+import { sc, fz, C } from '../config';
 
 interface CharConfig {
     id: string;
@@ -89,20 +89,21 @@ export class CharacterSelect extends Scene {
         this.drawBackground(CHARACTERS[0]);
 
         // ── Titre ─────────────────────────────────────────────────────────────
-        this.add.text(width / 2, sc(70), 'CHOISISSEZ VOTRE POKÉMON', {
-            fontSize: fz(28),
-            fontFamily: 'Georgia, serif',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: sc(5),
+        this.add.text(width / 2, sc(62), 'CHOISISSEZ VOTRE POKÉMON', {
+            fontSize: fz(26), fontFamily: 'Georgia, serif', fontStyle: 'bold',
+            color: C.S_GOLD, stroke: '#1a0d00', strokeThickness: sc(5), resolution: 2,
         }).setOrigin(0.5);
 
-        this.add.text(width / 2, sc(108), 'Chaque personnage possède un style de jeu unique', {
-            fontSize: fz(14),
-            fontFamily: 'Georgia, serif',
-            color: '#bdc3c7',
-            stroke: '#000',
-            strokeThickness: sc(2),
+        // Séparateur titre
+        const titSep = this.add.graphics();
+        titSep.lineStyle(1, C.GOLD_BORDER, 0.5);
+        titSep.lineBetween(width / 2 - sc(220), sc(82), width / 2 + sc(220), sc(82));
+        titSep.fillStyle(C.GOLD, 0.8);
+        titSep.fillCircle(width / 2, sc(82), sc(3));
+
+        this.add.text(width / 2, sc(98), 'Chaque personnage possède un style de jeu unique', {
+            fontSize: fz(13), fontFamily: 'Georgia, serif', fontStyle: 'italic',
+            color: C.S_MUTED, stroke: '#000', strokeThickness: sc(1), resolution: 2,
         }).setOrigin(0.5);
 
         // ── Cartes Personnages ─────────────────────────────────────────────────
@@ -153,20 +154,17 @@ export class CharacterSelect extends Scene {
         this.confirmBtn = this.makeConfirmButton(width / 2, height - sc(60));
 
         // ── Back ───────────────────────────────────────────────────────────────
-        const backZone = this.add.zone(sc(80), sc(40), sc(120), sc(36)).setInteractive({ cursor: 'pointer' });
+        const backZone = this.add.zone(sc(80), sc(40), sc(130), sc(36)).setInteractive({ cursor: 'pointer' });
         const backText = this.add.text(sc(80), sc(40), '← Retour', {
-            fontSize: fz(14),
-            fontFamily: 'Georgia, serif',
-            color: '#bdc3c7',
-            stroke: '#000',
-            strokeThickness: sc(2),
+            fontSize: fz(14), fontFamily: 'Georgia, serif',
+            color: C.S_MUTED, stroke: '#000', strokeThickness: sc(2), resolution: 2,
         }).setOrigin(0.5);
         backZone.on('pointerup', () => {
             this.cameras.main.fadeOut(300, 0, 0, 0);
             this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('MainMenu'));
         });
-        backZone.on('pointerover', () => backText.setColor('#ffffff'));
-        backZone.on('pointerout', () => backText.setColor('#bdc3c7'));
+        backZone.on('pointerover', () => backText.setColor(C.S_GOLD));
+        backZone.on('pointerout', () => backText.setColor(C.S_MUTED));
 
         this.cameras.main.fadeIn(500);
 
@@ -183,18 +181,25 @@ export class CharacterSelect extends Scene {
     ): Phaser.GameObjects.Container {
         const container = this.add.container(x, y);
 
-        // Fond de carte
+        // Fond de carte TCG premium
         const bg = this.add.graphics();
         const drawCard = (hovered: boolean, sel: boolean) => {
             bg.clear();
-            const alpha = sel ? 0.9 : hovered ? 0.75 : 0.5;
-            bg.fillStyle(0x000000, alpha);
-            bg.fillRoundedRect(-cardW / 2, -cardH / 2, cardW, cardH, sc(16));
-            const borderAlpha = sel ? 1 : hovered ? 0.8 : 0.3;
-            const borderColor = sel ? cfg.accentColor : hovered ? cfg.accentColor : 0xffffff;
-            const borderW = sel ? sc(3) : sc(2);
-            bg.lineStyle(borderW, borderColor, borderAlpha);
-            bg.strokeRoundedRect(-cardW / 2, -cardH / 2, cardW, cardH, sc(16));
+            const cr = sc(14);
+            // Ombre
+            bg.fillStyle(0x000000, 0.55);
+            bg.fillRoundedRect(-cardW / 2 + sc(4), -cardH / 2 + sc(4), cardW, cardH, cr);
+            // Corps
+            bg.fillStyle(sel ? C.BG_SURFACE : (hovered ? C.BG_PANEL : C.BG_MAIN), sel ? 0.97 : 0.92);
+            bg.fillRoundedRect(-cardW / 2, -cardH / 2, cardW, cardH, cr);
+            // Bordure interne (couleur accent perso)
+            const innerAlpha = sel ? 0.7 : hovered ? 0.5 : 0.2;
+            bg.lineStyle(sel ? sc(2) : sc(1), cfg.accentColor, innerAlpha);
+            bg.strokeRoundedRect(-cardW / 2 + sc(3), -cardH / 2 + sc(3), cardW - sc(6), cardH - sc(6), cr - 3);
+            // Bordure externe dorée
+            const goldAlpha = sel ? 1 : hovered ? 0.7 : 0.3;
+            bg.lineStyle(sel ? sc(3) : sc(1.5), sel ? C.GOLD : C.GOLD_BORDER, goldAlpha);
+            bg.strokeRoundedRect(-cardW / 2, -cardH / 2, cardW, cardH, cr);
         };
         drawCard(false, selected);
         container.add(bg);
@@ -427,8 +432,8 @@ export class CharacterSelect extends Scene {
                 this.bgImg.setTexture(cfg.bgKey);
                 this.bgImg.setDisplaySize(width, height);
             }
-            // Overlay sombre
-            this.bgGfx.fillStyle(0x000000, 0.55);
+            // Overlay premium (fond sombre + vignette basse)
+            this.bgGfx.fillStyle(C.BG_DEEP, 0.68);
             this.bgGfx.fillRect(0, 0, width, height);
         } else {
             // Gradient procédural par personnage
@@ -456,27 +461,28 @@ export class CharacterSelect extends Scene {
 
         const gfx = this.add.graphics();
         const text = this.add.text(x, y, `Jouer avec ${cfg.name}`, {
-            fontSize: fz(18),
-            fontFamily: 'Georgia, serif',
-            color: '#ffffff',
-            stroke: '#000',
-            strokeThickness: sc(3),
+            fontSize: fz(16), fontFamily: 'Georgia, serif', fontStyle: 'bold',
+            color: C.S_GOLD, stroke: '#000', strokeThickness: sc(2), resolution: 2,
         }).setOrigin(0.5).setDepth(1);
 
         const zone = this.add.zone(x, y, w, h).setInteractive({ cursor: 'pointer' }).setDepth(2);
 
         const draw = (hover: boolean) => {
-            const c = CHARACTERS.find(cc => cc.id === this.selectedId)!;
             gfx.clear();
-            gfx.fillStyle(hover ? c.accentColor : c.darkColor, 1);
+            // Ombre
+            gfx.fillStyle(0x000000, 0.45);
+            gfx.fillRoundedRect(x - w / 2 + sc(3), y - h / 2 + sc(3), w, h, sc(12));
+            // Corps
+            gfx.fillStyle(hover ? C.BG_SURFACE : C.BG_PANEL, 1);
             gfx.fillRoundedRect(x - w / 2, y - h / 2, w, h, sc(12));
-            gfx.lineStyle(sc(2), 0xffffff, hover ? 0.6 : 0.2);
+            // Bordure or
+            gfx.lineStyle(hover ? sc(2.5) : sc(1.5), hover ? C.GOLD : C.GOLD_BORDER, 1);
             gfx.strokeRoundedRect(x - w / 2, y - h / 2, w, h, sc(12));
         };
         draw(false);
 
-        zone.on('pointerover', () => draw(true));
-        zone.on('pointerout', () => draw(false));
+        zone.on('pointerover', () => { draw(true); text.setColor(C.S_GOLD_HI); });
+        zone.on('pointerout', () => { draw(false); text.setColor(C.S_GOLD); });
         zone.on('pointerup', () => this.startRun());
 
         return { gfx, text, zone };
@@ -488,9 +494,11 @@ export class CharacterSelect extends Scene {
         const w = sc(300);
         const h = sc(54);
         this.confirmBtn.gfx.clear();
-        this.confirmBtn.gfx.fillStyle(cfg.darkColor, 1);
+        this.confirmBtn.gfx.fillStyle(0x000000, 0.45);
+        this.confirmBtn.gfx.fillRoundedRect(x - w / 2 + sc(3), y - h / 2 + sc(3), w, h, sc(12));
+        this.confirmBtn.gfx.fillStyle(C.BG_PANEL, 1);
         this.confirmBtn.gfx.fillRoundedRect(x - w / 2, y - h / 2, w, h, sc(12));
-        this.confirmBtn.gfx.lineStyle(sc(2), 0xffffff, 0.2);
+        this.confirmBtn.gfx.lineStyle(sc(1.5), C.GOLD_BORDER, 1);
         this.confirmBtn.gfx.strokeRoundedRect(x - w / 2, y - h / 2, w, h, sc(12));
     }
 

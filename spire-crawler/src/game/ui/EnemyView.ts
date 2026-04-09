@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Enemy } from '../core/entities/Enemy';
 import { IntentIcon } from './IntentIcon';
-import { sc, fz } from '../config';
+import { sc, fz, C } from '../config';
 import { StatusEffectId } from '../core/types';
 import { StatusEffect } from '../core/effects/StatusEffect';
 
@@ -70,7 +70,6 @@ export class EnemyView extends Phaser.GameObjects.Container {
     private panelBg!: Phaser.GameObjects.Graphics;
     private fullHpBar!: Phaser.GameObjects.Graphics;
     private hpText!: Phaser.GameObjects.Text;
-    private nameText!: Phaser.GameObjects.Text;
     private statusDescCtn!: Phaser.GameObjects.Container;
     intentIcon: IntentIcon;
     private usingSprite: boolean;
@@ -107,11 +106,71 @@ export class EnemyView extends Phaser.GameObjects.Container {
                 imgIdle.style.cssText =
                     `width:${GIF_BOX}px;height:${GIF_BOX}px;` +
                     'object-fit:contain;image-rendering:pixelated;' +
-                    'pointer-events:none;display:block;';
-                this.gifIdleDom = scene.add.dom(x, y, imgIdle).setDepth(4);
+                    'pointer-events:none;display:block;position:relative;z-index:0;';
+                this.gifIdleImg = imgIdle;
+
+                // ── Wrapper parent (suggestion user) ─────────────────────────
+                // Contient le GIF + une zone de hit transparente pour le hover.
+                // La zone de hit redispatch aussi les events pointer au canvas
+                // Phaser pour que drag-drop / click ennemis continuent de fonctionner.
+                const hitW = GIF_BOX + 60;
+                const hitH_div = GIF_BOX + 70;
+                const wrapDiv = document.createElement('div');
+                wrapDiv.style.cssText =
+                    `width:${hitW}px;height:${hitH_div}px;` +
+                    'position:relative;overflow:visible;';
+
+                // GIF centré dans le wrapper
+                const gifContainer = document.createElement('div');
+                gifContainer.style.cssText =
+                    `position:absolute;` +
+                    `left:${(hitW - GIF_BOX) / 2}px;` +
+                    `top:${(hitH_div - GIF_BOX) / 2}px;` +
+                    'pointer-events:none;';
+                gifContainer.appendChild(imgIdle);
+                wrapDiv.appendChild(gifContainer);
+
+                // Zone de hit transparente (couvre tout le wrapper)
+                const hitDiv = document.createElement('div');
+                hitDiv.style.cssText =
+                    'position:absolute;inset:0;cursor:pointer;' +
+                    'pointer-events:auto;background:transparent;z-index:1;';
+
+                // Hover → affiche / cache le panneau info
+                hitDiv.addEventListener('mouseenter', () => {
+                    if (this.infoPanel) this.infoPanel.setVisible(true);
+                });
+                hitDiv.addEventListener('mouseleave', () => {
+                    if (this.infoPanel) this.infoPanel.setVisible(false);
+                    this.hideTooltip();
+                });
+                hitDiv.addEventListener('mousemove', (e) => {
+                    if (this.infoPanel?.visible && this.scene) {
+                        this.checkBadgeHoverDom(e.clientX, e.clientY);
+                    }
+                });
+
+                // Redispatch des events pointer vers le canvas Phaser
+                // (nécessaire pour que drag-drop et click-ennemi fonctionnent)
+                const canvas = scene.game.canvas;
+                const fwd = (e: PointerEvent) => {
+                    canvas.dispatchEvent(new PointerEvent(e.type, {
+                        bubbles: false, cancelable: true,
+                        clientX: e.clientX, clientY: e.clientY,
+                        pointerId: e.pointerId,
+                        pointerType: e.pointerType || 'mouse',
+                        buttons: e.buttons,
+                        pressure: e.pressure || 0,
+                    }));
+                };
+                (['pointerdown', 'pointermove', 'pointerup', 'pointercancel'] as const)
+                    .forEach(t => hitDiv.addEventListener(t, fwd as EventListener));
+
+                wrapDiv.appendChild(hitDiv);
+
+                this.gifIdleDom = scene.add.dom(x, y, wrapDiv).setDepth(4);
                 if (this.gifIdleDom.node.parentElement)
                     this.gifIdleDom.node.parentElement.style.pointerEvents = 'none';
-                this.gifIdleImg = imgIdle;
             } else {
                 this.draw();
             }
@@ -152,15 +211,8 @@ export class EnemyView extends Phaser.GameObjects.Container {
             this.draw();
         }
 
-        // ── Nom ───────────────────────────────────────────────────────────────
-        const nameCY  = -(sh + sc(18));
-        this.nameText = scene.add.text(0, nameCY, enemy.name, {
-            fontSize: fz(15), fontFamily: 'Georgia, serif', fontStyle: 'bold',
-            color: '#ecf0f1', stroke: '#000', strokeThickness: 3, resolution: 2,
-        }).setOrigin(0.5);
-
         // ── Intent icon ───────────────────────────────────────────────────────
-        const intentY = -(sh + sc(68));
+        const intentY = -(sh + sc(90));
         this.intentIcon = new IntentIcon(scene, 0, intentY);
 
         // ── Barre HP fine (sous le sprite) ────────────────────────────────────
@@ -181,7 +233,7 @@ export class EnemyView extends Phaser.GameObjects.Container {
         this.infoPanel.setDepth(8);
 
         this.add([this.gfxBody, this.intentIcon, this.infoPanel,
-            this.miniBarGfx, this.miniHpText, this.nameText, this.statusRowCtn]);
+            this.miniBarGfx, this.miniHpText, this.statusRowCtn]);
 
         // ── Interaction ───────────────────────────────────────────────────────
         const hitH = sh * 2 + BADGE_H + sc(120);
@@ -210,11 +262,11 @@ export class EnemyView extends Phaser.GameObjects.Container {
         const bg    = scene.add.graphics();
         const title = scene.add.text(sc(8), sc(6), '', {
             fontSize: fz(13), fontFamily: 'Georgia, serif', fontStyle: 'bold',
-            color: '#ffffff', stroke: '#000', strokeThickness: 2, resolution: 2,
+            color: C.S_GOLD, stroke: '#000', strokeThickness: 2, resolution: 2,
         });
         const desc = scene.add.text(sc(8), sc(24), '', {
             fontSize: fz(11), fontFamily: 'Georgia, serif',
-            color: '#bdc3c7', stroke: '#000', strokeThickness: 1,
+            color: C.S_MUTED, stroke: '#000', strokeThickness: 1,
             wordWrap: { width: sc(190) }, resolution: 2,
         });
         ctn.add([bg, title, desc]);
@@ -234,10 +286,10 @@ export class EnemyView extends Phaser.GameObjects.Container {
         const W = sc(210);
         const h = sc(8) + titleTxt.height + descTxt.height + sc(14);
         bg.clear();
-        bg.fillStyle(0x0a0a14, 0.93);
-        bg.fillRoundedRect(0, 0, W, h, 7);
-        bg.lineStyle(1.5, 0x4a4a6a, 0.9);
-        bg.strokeRoundedRect(0, 0, W, h, 7);
+        bg.fillStyle(C.BG_PANEL, 0.95);
+        bg.fillRoundedRect(0, 0, W, h, sc(7));
+        bg.lineStyle(1.5, C.GOLD_BORDER, 0.85);
+        bg.strokeRoundedRect(0, 0, W, h, sc(7));
 
         const sw = this.scene.scale.width;
         const tx = screenX + W + 16 > sw ? screenX - W - 8 : screenX + 10;
@@ -250,14 +302,39 @@ export class EnemyView extends Phaser.GameObjects.Container {
     }
 
     private checkBadgeHover(ptr: Phaser.Input.Pointer): void {
-        const localX = ptr.x - this.x;
-        const localY = ptr.y - this.y;
+        this.checkBadgeHoverDom(ptr.x, ptr.y);
+    }
+
+    /**
+     * Vérifie si (clientX, clientY) survole un badge de statut.
+     * Accepte des coordonnées canvas (Phaser) OU client DOM (depuis hitDiv).
+     */
+    private checkBadgeHoverDom(cx: number, cy: number): void {
+        if (!this.scene) return;
+
+        // Convertir coordonnées client DOM → coordonnées canvas si nécessaire
+        let gx = cx;
+        let gy = cy;
+        const canvas = this.scene.game.canvas;
+        const rect   = canvas.getBoundingClientRect();
+        if (cx > rect.right || cy > rect.bottom || cx < rect.left || cy < rect.top) {
+            // Coordonnées déjà en espace canvas (from Phaser pointer)
+        } else {
+            // Coordonnées client DOM → espace jeu
+            const scaleX = this.scene.scale.width  / rect.width;
+            const scaleY = this.scene.scale.height / rect.height;
+            gx = (cx - rect.left) * scaleX;
+            gy = (cy - rect.top)  * scaleY;
+        }
+
+        const localX = gx - this.x;
+        const localY = gy - this.y;
         const rowY   = this.statusRowCtn.y;
 
         if (Math.abs(localY - rowY) <= BADGE_H) {
             for (const b of this.badgeData) {
                 if (localX >= b.bx - b.w / 2 && localX <= b.bx + b.w / 2) {
-                    this.showTooltip(ptr.x, ptr.y, b.title, b.desc);
+                    this.showTooltip(gx, gy, b.title, b.desc);
                     return;
                 }
             }
@@ -269,17 +346,25 @@ export class EnemyView extends Phaser.GameObjects.Container {
 
     private buildInfoPanel(scene: Phaser.Scene, sh: number): void {
         const panelY = sh + HUD_PAD + MINI_H + STATUS_PAD + BADGE_H + sc(10);
-        this.infoPanel    = scene.add.container(0, panelY);
-        this.panelBg      = scene.add.graphics();
-        this.fullHpBar    = scene.add.graphics();
-        this.hpText       = scene.add.text(0, sc(30), '', {
+        this.infoPanel = scene.add.container(0, panelY);
+        this.panelBg   = scene.add.graphics();
+
+        // Nom en haut du panneau (visible au hover)
+        const nameLabel = scene.add.text(0, sc(6), this.enemy.name, {
+            fontSize: fz(14), fontFamily: 'Georgia, serif', fontStyle: 'bold',
+            color: C.S_GOLD, stroke: '#000', strokeThickness: 2, resolution: 2,
+        }).setOrigin(0.5);
+
+        this.fullHpBar = scene.add.graphics();
+        this.hpText    = scene.add.text(0, sc(46), '', {
             fontSize: fz(12), fontFamily: 'Georgia, serif',
             color: '#ecf0f1', stroke: '#000', strokeThickness: 2, resolution: 2,
         }).setOrigin(0.5);
-        // Container pour les descriptions des effets (reconstruit dans refresh)
-        this.statusDescCtn = scene.add.container(-FULL_W / 2, sc(42));
 
-        this.infoPanel.add([this.panelBg, this.fullHpBar, this.hpText, this.statusDescCtn]);
+        // Container pour les descriptions des effets (reconstruit dans refresh)
+        this.statusDescCtn = scene.add.container(-FULL_W / 2, sc(58));
+
+        this.infoPanel.add([this.panelBg, nameLabel, this.fullHpBar, this.hpText, this.statusDescCtn]);
     }
 
     // ── Fallback procédural ───────────────────────────────────────────────────
@@ -345,7 +430,7 @@ export class EnemyView extends Phaser.GameObjects.Container {
         // HP bar full
         this.fullHpBar.clear();
         const bx = -FULL_W / 2;
-        const by = sc(8);
+        const by = sc(24);   // décalé vers le bas pour laisser place au nom
         this.fullHpBar.fillStyle(0x1a0808, 0.95);
         this.fullHpBar.fillRoundedRect(bx - 3, by - 3, FULL_W + 6, FULL_H + 6, 7);
         this.fullHpBar.fillStyle(0x2d1010, 1);
@@ -383,11 +468,11 @@ export class EnemyView extends Phaser.GameObjects.Container {
         }
 
         // Redessine le fond du panneau selon la hauteur du contenu
-        const panelContentH = Math.max(sc(46), sc(42) + dy + sc(8));
+        const panelContentH = Math.max(sc(62), sc(58) + dy + sc(8));
         this.panelBg.clear();
-        this.panelBg.fillStyle(0x000000, 0.80);
+        this.panelBg.fillStyle(C.BG_PANEL, 0.94);
         this.panelBg.fillRoundedRect(-FULL_W / 2 - 10, 0, FULL_W + 20, panelContentH, 10);
-        this.panelBg.lineStyle(1, 0x4a4a6a, 0.85);
+        this.panelBg.lineStyle(1.5, C.GOLD_BORDER, 0.65);
         this.panelBg.strokeRoundedRect(-FULL_W / 2 - 10, 0, FULL_W + 20, panelContentH, 10);
 
         // ── Intent ────────────────────────────────────────────────────────────
@@ -476,6 +561,17 @@ export class EnemyView extends Phaser.GameObjects.Container {
             // Stocker pour détection hover
             this.badgeData.push({ bx, w: b.w, title: b.title, desc: b.desc });
         }
+    }
+
+    // ── Visibilité GIFs (pour le drag&drop) ──────────────────────────────────
+
+    /**
+     * Cache ou affiche les éléments DOM GIF de l'ennemi.
+     * Utilisé pendant le drag de carte pour que la carte soit au premier plan.
+     */
+    setGifsVisible(v: boolean): void {
+        if (this.gifIdleDom)   this.gifIdleDom.setVisible(v);
+        if (this.gifActionDom) this.gifActionDom.setVisible(v && this.gifActionImg?.style.display === 'block');
     }
 
     // ── Animations ────────────────────────────────────────────────────────────

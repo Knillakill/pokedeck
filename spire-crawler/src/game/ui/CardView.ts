@@ -102,7 +102,6 @@ export class CardView extends Phaser.GameObjects.Container {
         }
 
         // ── Textes ────────────────────────────────────────────────────────
-        // Position initiale : sera ajustée dans updateTextLayout()
         this.costText = config.scene.add.text(0, 0, String(config.card.cost), {
             fontSize: fz(24),
             fontFamily: 'Georgia, serif',
@@ -263,7 +262,6 @@ export class CardView extends Phaser.GameObjects.Container {
     private onHover(): void {
         if (this.isHovered) return;
         this.isHovered = true;
-        // Remonte la carte pour qu'elle soit entièrement visible (style STS)
         const targetY = this.scene.scale.height - CardView.HEIGHT / 2 - 15;
         this.scene.tweens.add({
             targets: this,
@@ -295,7 +293,7 @@ export class CardView extends Phaser.GameObjects.Container {
 
     /**
      * Met à jour le contexte de preview.
-     * - player    : entité joueur (pour STRENGTH / WEAK / DEXTERITY)
+     * - player      : entité joueur (pour STRENGTH / WEAK / DEXTERITY)
      * - targetEnemy : ennemi ciblé (pour VULNERABLE)
      * Passer null/null pour revenir à la description de base.
      */
@@ -323,7 +321,6 @@ export class CardView extends Phaser.GameObjects.Container {
                     const outgoing = player.calcOutgoingDamage(base);
                     const final    = target ? target.calcIncomingDamage(outgoing) : outgoing;
                     if (final !== base) {
-                        // Remplace la première occurrence du nombre exact dans la description
                         text = text.replace(new RegExp(`\\b${base}\\b`), String(final));
                         if (final > base) hasUp   = true;
                         else              hasDown = true;
@@ -343,7 +340,6 @@ export class CardView extends Phaser.GameObjects.Container {
 
         this.descText.setText(text);
 
-        // Couleur de la description : rouge si affaibli, vert si boosté, défaut sinon
         if (hasDown) {
             this.descText.setColor('#e74c3c');
             this.descText.setStroke(this.usingImage ? '#3b0000' : '#000', 1);
@@ -351,7 +347,6 @@ export class CardView extends Phaser.GameObjects.Container {
             this.descText.setColor('#27ae60');
             this.descText.setStroke(this.usingImage ? '#003300' : '#000', 1);
         } else {
-            // Restaure les couleurs par défaut selon le mode de rendu
             if (this.usingImage) {
                 this.descText.setColor(this.card.upgraded ? '#006622' : '#2c1a00');
                 this.descText.setStroke(this.card.upgraded ? '#ccffcc' : '#f5deb3', 1);
@@ -384,41 +379,77 @@ export class CardView extends Phaser.GameObjects.Container {
         this.costText.setText(String(card.cost));
         this.nameText.setText(card.name);
         this.descText.setText(card.description);
+        if (this.bgImage) {
+            const texKey = getArtTextureKey(card.definitionId);
+            if (this.scene?.textures?.exists(texKey)) {
+                this.bgImage.setTexture(texKey);
+            }
+        }
         this.draw();
-        this.applyPreview(); // Re-applique le preview après mise à jour de la carte
+        this.applyPreview();
     }
 
     /**
-     * Joue la carte :
-     *  - Avec targetX/Y (carte attaque) : vole vers la cible avant de disparaître.
-     *  - Sans                           : monte + fade (compétences/pouvoirs).
+     * Joue la carte (attaque) : vole vers la cible avant de disparaître.
      */
-    playCardAnimation(onComplete: () => void, targetX?: number, targetY?: number): void {
-        if (targetX !== undefined && targetY !== undefined) {
-            // Vol vers la cible
-            this.scene.tweens.add({
-                targets: this,
-                x: targetX,
-                y: targetY - 20,
-                scaleX: 0.35,
-                scaleY: 0.35,
-                rotation: 0,
-                alpha: 0,
-                duration: 300,
-                ease: 'Cubic.easeIn',
-                onComplete,
-            });
-        } else {
-            this.scene.tweens.add({
-                targets: this,
-                y: this.y - 90,
-                scaleX: 1.08,
-                scaleY: 1.08,
-                alpha: 0,
-                duration: 300,
-                ease: 'Power2',
-                onComplete,
-            });
-        }
+    playCardAnimation(onComplete: () => void, targetX: number, targetY: number): void {
+        this.scene.tweens.add({
+            targets: this,
+            x: targetX,
+            y: targetY - 20,
+            scaleX: 0.3,
+            scaleY: 0.3,
+            rotation: 0,
+            alpha: 0,
+            duration: 280,
+            ease: 'Cubic.easeIn',
+            onComplete,
+        });
+    }
+
+    /**
+     * Compétence / Pouvoir : la carte vole vers la défausse (bas-droite).
+     */
+    playDiscardAnimation(discardX: number, discardY: number, onComplete: () => void): void {
+        const spinDir = Math.random() < 0.5 ? 1 : -1;
+        this.scene.tweens.add({
+            targets: this,
+            x: discardX,
+            y: discardY,
+            scaleX: 0.22,
+            scaleY: 0.22,
+            rotation: spinDir * Phaser.Math.DegToRad(Phaser.Math.Between(20, 45)),
+            alpha: 0,
+            duration: 380,
+            ease: 'Cubic.easeIn',
+            onComplete,
+        });
+    }
+
+    /**
+     * Animation de pioche : la carte part de la position de la pioche (fromX, fromY)
+     * et vole vers sa position courante dans la main.
+     * À appeler après avoir positionné la carte à son emplacement final.
+     */
+    animateFromDeck(fromX: number, fromY: number, delay: number = 0): void {
+        const targetX = this.x;
+        const targetY = this.y;
+        const targetRot = this.rotation;
+        this.setPosition(fromX, fromY);
+        this.setScale(0.18);
+        this.setAlpha(0);
+        this.setRotation(0);
+        this.scene.tweens.add({
+            targets: this,
+            x: targetX,
+            y: targetY,
+            scaleX: 1,
+            scaleY: 1,
+            rotation: targetRot,
+            alpha: 1,
+            duration: 360,
+            delay,
+            ease: 'Back.easeOut',
+        });
     }
 }

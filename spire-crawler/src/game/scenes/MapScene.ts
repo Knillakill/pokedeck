@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { RunManager } from '../core/RunManager';
 import { MapNode, NodeType } from '../core/types';
 import { MapNodeView } from '../ui/MapNodeView';
+import { C, sc, fz } from '../config';
 
 export class MapScene extends Scene {
     private nodeViews: MapNodeView[] = [];
@@ -24,31 +25,53 @@ export class MapScene extends Scene {
     private drawBackground(): void {
         const { width, height } = this.scale;
         const bg = this.add.graphics();
-        bg.fillGradientStyle(0x0d0d1a, 0x0d1117, 0x1a0d2e, 0x0d0d1a, 1);
+        bg.fillGradientStyle(C.BG_DEEP, C.BG_DEEP, C.BG_MAIN, C.BG_PANEL, 1);
         bg.fillRect(0, 0, width, height);
 
-        // Brume décorative
-        for (let i = 0; i < 12; i++) {
+        // Brume violette plus dense
+        for (let i = 0; i < 18; i++) {
             const mist = this.add.graphics();
-            mist.fillStyle(0x6c5ce7, 0.03 + Math.random() * 0.04);
+            mist.fillStyle(C.PURPLE, 0.04 + Math.random() * 0.06);
             const cx = Math.random() * width;
             const cy = Math.random() * height;
-            mist.fillEllipse(cx, cy, 200 + Math.random() * 300, 80 + Math.random() * 120);
+            mist.fillEllipse(cx, cy, 250 + Math.random() * 320, 90 + Math.random() * 140);
         }
+
+        // Ligne or en bas — horizon du donjon
+        const deco = this.add.graphics();
+        deco.lineStyle(1, C.GOLD_DIM, 0.35);
+        deco.lineBetween(0, height - sc(8), width, height - sc(8));
     }
 
     private drawTitle(): void {
         const run = RunManager.instance;
-        this.add.text(this.scale.width / 2, 28, `Acte ${run.act} — Étage ${run.floor}`, {
-            fontSize: '16px', fontFamily: 'Georgia, serif',
-            color: '#f39c12', stroke: '#000', strokeThickness: 2,
+        const { width } = this.scale;
+
+        // Fond titre
+        const titBg = this.add.graphics();
+        titBg.fillStyle(C.BG_PANEL, 0.85);
+        titBg.fillRoundedRect(width / 2 - sc(180), sc(10), sc(360), sc(34), sc(8));
+        titBg.lineStyle(1, C.GOLD_BORDER, 0.5);
+        titBg.strokeRoundedRect(width / 2 - sc(180), sc(10), sc(360), sc(34), sc(8));
+
+        this.add.text(width / 2, sc(27), `Acte ${run.act}  —  Étage ${run.floor}`, {
+            fontSize: fz(15), fontFamily: 'Georgia, serif', fontStyle: 'bold',
+            color: C.S_GOLD, stroke: '#000', strokeThickness: 2, resolution: 2,
         }).setOrigin(0.5);
     }
 
     private drawPlayerInfo(run: RunManager): void {
-        this.add.text(16, 16, `❤ ${run.playerHp}/${run.playerMaxHp}  💰 ${run.playerGold}  📦 ${run.deck.length} cartes`, {
-            fontSize: '13px', fontFamily: 'Georgia, serif', color: '#ecf0f1',
-        });
+        const infoBg = this.add.graphics();
+        infoBg.fillStyle(C.BG_PANEL, 0.82);
+        infoBg.fillRoundedRect(sc(8), sc(10), sc(280), sc(34), sc(8));
+        infoBg.lineStyle(1, C.GOLD_DIM, 0.45);
+        infoBg.strokeRoundedRect(sc(8), sc(10), sc(280), sc(34), sc(8));
+
+        this.add.text(sc(20), sc(27),
+            `❤ ${run.playerHp}/${run.playerMaxHp}   💰 ${run.playerGold}   📦 ${run.deck.length} cartes`, {
+            fontSize: fz(12), fontFamily: 'Georgia, serif',
+            color: C.S_TEXT, stroke: '#000', strokeThickness: 1, resolution: 2,
+        }).setOrigin(0, 0.5);
     }
 
     private buildMapGraph(run: RunManager): void {
@@ -56,10 +79,9 @@ export class MapScene extends Scene {
         const map = run.map;
         const nodes = map.nodes;
 
-        // Calcul des positions visuelles basées sur row/col
         const maxRow = Math.max(...nodes.map(n => n.row));
-        const paddingX = 150;
-        const paddingY = 80;
+        const paddingX = sc(150);
+        const paddingY = sc(80);
         const usableW = width - paddingX * 2;
         const usableH = height - paddingY * 2;
 
@@ -73,22 +95,28 @@ export class MapScene extends Scene {
             posMap.set(node.id, { x: colOffset, y: rowY });
         });
 
-        // Dessiner les connexions en premier
+        // Connexions
         const lineGfx = this.add.graphics();
         nodes.forEach(node => {
             const from = posMap.get(node.id)!;
             node.connections.forEach(targetId => {
                 const to = posMap.get(targetId);
                 if (!to) return;
-                lineGfx.lineStyle(2, node.completed ? 0xf39c12 : 0x4a4a6a, node.completed ? 0.8 : 0.4);
-                lineGfx.lineBetween(from.x, from.y, to.x, to.y);
+                if (node.completed) {
+                    lineGfx.lineStyle(3, C.GOLD_DEEP, 0.85);
+                    lineGfx.lineBetween(from.x, from.y, to.x, to.y);
+                    // Lueur sur le chemin complété
+                    lineGfx.lineStyle(7, C.GOLD, 0.12);
+                    lineGfx.lineBetween(from.x, from.y, to.x, to.y);
+                } else {
+                    lineGfx.lineStyle(1.5, C.PURPLE_SOFT, 0.5);
+                    lineGfx.lineBetween(from.x, from.y, to.x, to.y);
+                }
             });
         });
 
-        // Nœuds disponibles
         const availableIds = new Set(run.getAvailableNodes().map(n => n.id));
 
-        // Créer les vues
         nodes.forEach(node => {
             const pos = posMap.get(node.id)!;
             const view = new MapNodeView(this, pos.x, pos.y, node, (n) => this.onNodeClick(n));
@@ -115,16 +143,12 @@ export class MapScene extends Scene {
                         isBoss: node.type === NodeType.BOSS,
                     });
                     break;
-
                 case NodeType.REST:
                     this.scene.start('RestScene', { nodeId: node.id });
                     break;
-
                 case NodeType.EVENT:
-                    // Pour l'instant, repose
                     this.scene.start('RestScene', { nodeId: node.id });
                     break;
-
                 default:
                     break;
             }

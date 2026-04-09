@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import { IntentType } from '../core/types';
-import { sc, fz } from '../config';
+import { sc, fz, C } from '../config';
 
-const ICON_SIZE = sc(54);   // était 32 — beaucoup plus lisible
+const ICON_SIZE = sc(72);   // agrandi pour meilleure lisibilité
 
 const INTENT_COLORS: Record<IntentType, number> = {
     [IntentType.ATTACK]:        0xe74c3c,
@@ -63,20 +63,20 @@ export class IntentIcon extends Phaser.GameObjects.Container {
         this.gfx = scene.add.graphics();
 
         this.label = scene.add.text(0, -2, '?', {
-            fontSize: fz(22),
+            fontSize: fz(30),
             fontFamily: 'sans-serif',
             fontStyle: 'bold',
             color: '#ffffff',
         }).setOrigin(0.5);
 
         // Dégâts : très visible, gros et rouge vif
-        this.dmgText = scene.add.text(0, ICON_SIZE / 2 + 14, '', {
-            fontSize: fz(22),
+        this.dmgText = scene.add.text(0, ICON_SIZE / 2 + sc(18), '', {
+            fontSize: fz(30),
             fontFamily: 'Georgia, serif',
             fontStyle: 'bold',
             color: '#ff4444',
             stroke: '#000',
-            strokeThickness: 4,
+            strokeThickness: sc(5),
             resolution: 2,
         }).setOrigin(0.5);
 
@@ -102,13 +102,9 @@ export class IntentIcon extends Phaser.GameObjects.Container {
         container.add(bg);
 
         const text = scene.add.text(0, 0, '', {
-            fontSize: fz(12),
-            fontFamily: 'Georgia, serif',
-            color: '#ecf0f1',
-            stroke: '#000',
-            strokeThickness: 2,
-            align: 'center',
-            resolution: 2,
+            fontSize: fz(12), fontFamily: 'Georgia, serif',
+            color: C.S_TEXT, stroke: '#000', strokeThickness: 2,
+            align: 'center', resolution: 2,
         }).setOrigin(0.5);
         container.add(text);
 
@@ -137,10 +133,13 @@ export class IntentIcon extends Phaser.GameObjects.Container {
         text.setPosition(0, 0);
 
         bg.clear();
-        bg.fillStyle(0x0a0a14, 0.92);
-        bg.fillRoundedRect(-w / 2, -h / 2, w, h, 8);
-        bg.lineStyle(1, INTENT_COLORS[this.currentIntent], 0.9);
-        bg.strokeRoundedRect(-w / 2, -h / 2, w, h, 8);
+        bg.fillStyle(C.BG_PANEL, 0.94);
+        bg.fillRoundedRect(-w / 2, -h / 2, w, h, sc(8));
+        // Bord or + accent d'intent
+        bg.lineStyle(1.5, C.GOLD_BORDER, 0.55);
+        bg.strokeRoundedRect(-w / 2, -h / 2, w, h, sc(8));
+        bg.lineStyle(1, INTENT_COLORS[this.currentIntent], 0.6);
+        bg.strokeRoundedRect(-w / 2 + sc(2), -h / 2 + sc(2), w - sc(4), h - sc(4), sc(6));
     }
 
     update(intent: IntentType, damage?: number): void {
@@ -150,18 +149,21 @@ export class IntentIcon extends Phaser.GameObjects.Container {
         this.gfx.clear();
         const color = INTENT_COLORS[intent];
 
-        // Ombre
-        this.gfx.fillStyle(0x000000, 0.5);
-        this.gfx.fillCircle(2, 2, ICON_SIZE / 2);
-        // Corps
+        // Ombre portée
+        this.gfx.fillStyle(0x000000, 0.55);
+        this.gfx.fillCircle(sc(3), sc(3), ICON_SIZE / 2);
+        // Corps principal
         this.gfx.fillStyle(color, 1);
         this.gfx.fillCircle(0, 0, ICON_SIZE / 2);
-        // Reflet
-        this.gfx.fillStyle(0xffffff, 0.15);
-        this.gfx.fillCircle(-5, -6, ICON_SIZE / 5);
-        // Bordure
-        this.gfx.lineStyle(2, 0xffffff, 0.8);
-        this.gfx.strokeCircle(0, 0, ICON_SIZE / 2);
+        // Reflet interne
+        this.gfx.fillStyle(0xffffff, 0.18);
+        this.gfx.fillCircle(-sc(4), -sc(5), ICON_SIZE / 5);
+        // Bordure accent (couleur d'intent)
+        this.gfx.lineStyle(sc(1.5), color, 0.9);
+        this.gfx.strokeCircle(0, 0, ICON_SIZE / 2 + sc(2));
+        // Anneau or externe (cohérence visuelle premium)
+        this.gfx.lineStyle(sc(1), C.GOLD_BORDER, 0.65);
+        this.gfx.strokeCircle(0, 0, ICON_SIZE / 2 + sc(5));
 
         this.label.setText(INTENT_LABELS[intent]);
 

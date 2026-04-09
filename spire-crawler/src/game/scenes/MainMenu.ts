@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { C, sc, fz } from '../config';
 
 export class MainMenu extends Scene {
     constructor() {
@@ -12,110 +13,153 @@ export class MainMenu extends Scene {
 
         this.drawBackground();
 
-        // Titre
-        const title = this.add.text(cx, cy - 160, 'POKÉDECK', {
-            fontSize: '56px',
-            fontFamily: 'Georgia, serif',
-            color: '#2ecc71',
-            stroke: '#000000',
-            strokeThickness: 6,
+        // ── Sous-titre décoratif au-dessus ───────────────────────────────────
+        this.add.text(cx, cy - sc(175), '— POKÉMON SPIRE —', {
+            fontSize: fz(12), fontFamily: 'Georgia, serif', fontStyle: 'italic',
+            color: C.S_GOLD, stroke: '#000', strokeThickness: 1,
+            resolution: 2,
+        }).setOrigin(0.5).setAlpha(0.75);
+
+        // ── Titre principal ───────────────────────────────────────────────────
+        const title = this.add.text(cx, cy - sc(140), 'POKÉDECK', {
+            fontSize: fz(52), fontFamily: 'Georgia, serif', fontStyle: 'bold',
+            color: C.S_GOLD, stroke: '#1a0d00', strokeThickness: sc(6),
+            resolution: 2,
         }).setOrigin(0.5);
         this.tweens.add({
             targets: title,
-            y: cy - 155,
-            duration: 2000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut',
+            y: cy - sc(136),
+            duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
         });
 
-        this.add.text(cx, cy - 100, 'Un deckbuilder roguelike dans l\'univers Pokémon', {
-            fontSize: '16px',
-            fontFamily: 'Georgia, serif',
-            color: '#a9dfbf',
-            stroke: '#000',
-            strokeThickness: 2,
+        // Halo or derrière le titre
+        const glow = this.add.graphics().setAlpha(0.12);
+        glow.fillStyle(C.GOLD, 1);
+        glow.fillEllipse(cx, cy - sc(140), sc(480), sc(70));
+        glow.setDepth(-1);
+
+        // ── Sous-titre ────────────────────────────────────────────────────────
+        this.add.text(cx, cy - sc(90), 'Un deckbuilder roguelike dans l\'univers Pokémon', {
+            fontSize: fz(14), fontFamily: 'Georgia, serif',
+            color: C.S_MUTED, stroke: '#000', strokeThickness: 2, resolution: 2,
         }).setOrigin(0.5);
 
-        // Bouton Jouer
-        this.makeButton(cx, cy - 20, 'Nouvelle Partie', 0x27ae60, 0x2ecc71, () => {
+        // ── Séparateur ornemental ────────────────────────────────────────────
+        const sep = this.add.graphics();
+        sep.lineStyle(1, C.GOLD_BORDER, 0.5);
+        sep.lineBetween(cx - sc(140), cy - sc(68), cx + sc(140), cy - sc(68));
+        sep.fillStyle(C.GOLD, 0.7);
+        sep.fillCircle(cx - sc(140), cy - sc(68), sc(3));
+        sep.fillCircle(cx + sc(140), cy - sc(68), sc(3));
+        sep.fillCircle(cx, cy - sc(68), sc(4));
+
+        // ── Boutons ───────────────────────────────────────────────────────────
+        this.makeButton(cx, cy - sc(28), 'Nouvelle Partie', () => {
             this.cameras.main.fadeOut(400, 0, 0, 0);
             this.cameras.main.once('camerafadeoutcomplete', () => {
                 this.scene.start('CharacterSelect');
             });
         });
 
-        // Deck Viewer
-        this.makeButton(cx, cy + 50, 'Voir les Cartes', 0x2980b9, 0x3498db, () => {
+        this.makeButton(cx, cy + sc(46), 'Voir les Cartes', () => {
             this.scene.start('DeckViewer');
-        });
+        }, false);
 
-        // Footer
-        this.add.text(cx, height - 24, 'v0.1.0 — Sprites à venir', {
-            fontSize: '11px',
-            fontFamily: 'Georgia, serif',
-            color: '#636e72',
+        // ── Footer ────────────────────────────────────────────────────────────
+        this.add.text(cx, height - sc(24), 'v0.1.0  ·  PokéDeck Roguelike', {
+            fontSize: fz(10), fontFamily: 'Georgia, serif',
+            color: C.S_DIM, resolution: 2,
         }).setOrigin(0.5);
 
-        this.cameras.main.fadeIn(600);
+        this.cameras.main.fadeIn(700);
     }
 
     private drawBackground(): void {
         const { width, height } = this.scale;
         const bg = this.add.graphics();
-        bg.fillGradientStyle(0x0d1117, 0x0d1117, 0x1a1a2e, 0x1a1a2e, 1);
+        bg.fillGradientStyle(C.BG_DEEP, C.BG_DEEP, C.BG_MAIN, C.BG_PANEL, 1);
         bg.fillRect(0, 0, width, height);
 
-        // Particules décoratives
-        for (let i = 0; i < 60; i++) {
+        // Vignette centrale (radial sombre)
+        const vig = this.add.graphics();
+        vig.fillStyle(0x000000, 0.35);
+        vig.fillCircle(width / 2, height * 0.62, height * 0.72);
+
+        // Particules dorées
+        for (let i = 0; i < 55; i++) {
             const x = Math.random() * width;
             const y = Math.random() * height;
-            const r = Math.random() * 2 + 0.5;
-            const a = Math.random() * 0.6 + 0.2;
+            const r = Math.random() * sc(2) + sc(0.5);
+            const a = Math.random() * 0.55 + 0.15;
             const star = this.add.graphics();
-            star.fillStyle(0xf39c12, a);
+            star.fillStyle(C.GOLD, a);
             star.fillCircle(x, y, r);
             this.tweens.add({
                 targets: star,
-                alpha: 0.1,
-                duration: 1000 + Math.random() * 2000,
-                yoyo: true,
-                repeat: -1,
+                alpha: 0.05,
+                duration: 1200 + Math.random() * 2200,
+                yoyo: true, repeat: -1,
                 delay: Math.random() * 2000,
+            });
+        }
+
+        // Quelques étoiles pourpres
+        for (let i = 0; i < 18; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            const star = this.add.graphics();
+            star.fillStyle(C.PURPLE, 0.20 + Math.random() * 0.25);
+            star.fillCircle(x, y, sc(1.5) + Math.random() * sc(1));
+            this.tweens.add({
+                targets: star,
+                alpha: 0.02,
+                duration: 1800 + Math.random() * 3000,
+                yoyo: true, repeat: -1,
+                delay: Math.random() * 3000,
             });
         }
     }
 
     private makeButton(
         x: number, y: number, text: string,
-        colorFrom: number, colorTo: number,
-        onClick: () => void
+        onClick: () => void,
+        primary = true,
     ): void {
-        const btn = this.add.graphics();
-        const w = 240;
-        const h = 50;
+        const bw = sc(250), bh = sc(54), br = sc(10);
+        const bg = this.add.graphics();
 
         const draw = (hover: boolean) => {
-            btn.clear();
-            btn.fillStyle(hover ? colorTo : colorFrom, 1);
-            btn.fillRoundedRect(x - w / 2, y - h / 2, w, h, 12);
-            btn.lineStyle(2, 0xffffff, hover ? 0.5 : 0.2);
-            btn.strokeRoundedRect(x - w / 2, y - h / 2, w, h, 12);
+            bg.clear();
+            // Ombre
+            bg.fillStyle(0x000000, 0.45);
+            bg.fillRoundedRect(x - bw / 2 + sc(3), y - bh / 2 + sc(3), bw, bh, br);
+            // Fond
+            bg.fillStyle(hover ? C.BG_SURFACE : C.BG_PANEL, 1);
+            bg.fillRoundedRect(x - bw / 2, y - bh / 2, bw, bh, br);
+            // Bordure
+            const borderColor = primary
+                ? (hover ? C.GOLD : C.GOLD_BORDER)
+                : (hover ? C.GOLD_DIM : C.PURPLE_SOFT);
+            bg.lineStyle(hover ? 2.5 : 1.5, borderColor, 1);
+            bg.strokeRoundedRect(x - bw / 2, y - bh / 2, bw, bh, br);
+            // Reflet interne or sur hover
+            if (hover) {
+                bg.lineStyle(1, primary ? C.GOLD : C.PURPLE, 0.18);
+                bg.strokeRoundedRect(x - bw / 2 + sc(2), y - bh / 2 + sc(2), bw - sc(4), bh - sc(4), br - 2);
+            }
         };
 
         draw(false);
 
-        this.add.text(x, y, text, {
-            fontSize: '18px',
-            fontFamily: 'Georgia, serif',
-            color: '#ffffff',
-            stroke: '#000',
-            strokeThickness: 2,
+        const label = this.add.text(x, y, text, {
+            fontSize: fz(16), fontFamily: 'Georgia, serif', fontStyle: 'bold',
+            color: primary ? C.S_GOLD : C.S_MUTED,
+            stroke: '#000', strokeThickness: 2, resolution: 2,
         }).setOrigin(0.5);
 
-        const zone = this.add.zone(x, y, w, h).setInteractive({ cursor: 'pointer' });
-        zone.on('pointerover', () => draw(true));
-        zone.on('pointerout', () => draw(false));
+        const zone = this.add.zone(x, y, bw, bh).setInteractive({ cursor: 'pointer' });
+        zone.on('pointerover', () => { draw(true); label.setColor(C.S_GOLD_HI); });
+        zone.on('pointerout',  () => { draw(false); label.setColor(primary ? C.S_GOLD : C.S_MUTED); });
         zone.on('pointerup', onClick);
     }
 }

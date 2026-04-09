@@ -6,6 +6,7 @@ import { EnemyView } from '../ui/EnemyView';
 import { PlayerHUD, BottomBar } from '../ui/PlayerHUD';
 import { CombatPhase, CardType } from '../core/types';
 import { CardInstance } from '../core/cards/CardInstance';
+import { C, sc, fz } from '../config';
 
 export interface BattleSceneData {
     enemyIds: string[];
@@ -95,6 +96,10 @@ export class BattleScene extends Scene {
     private targetRingGfx!: Phaser.GameObjects.Graphics;
     private targetRingTween: Phaser.Tweens.Tween | null = null;
 
+    // ── Positions pioche / défausse (issues de BottomBar) ─────────────────────
+    private deckPos    = { x: 60,  y: 0 };
+    private discardPos = { x: 0,   y: 0 };
+
     constructor() {
         super('BattleScene');
     }
@@ -127,6 +132,12 @@ export class BattleScene extends Scene {
         this.createLogPanel();
         this.createPhaseText();
 
+        // Fix : le div overlay DOM de Phaser bloque les events souris vers le canvas.
+        // En le passant à pointer-events:none, le canvas Phaser reçoit tous les events
+        // et les hover/click sur les GIFs fonctionnent correctement.
+        const domCtn = (this.game as any).domContainer as HTMLElement | null;
+        if (domCtn) domCtn.style.pointerEvents = 'none';
+
         this.cameras.main.fadeIn(500);
         this.engine.startCombat();
     }
@@ -139,24 +150,33 @@ export class BattleScene extends Scene {
         if (this.textures.exists('battle_bg')) {
             const bg = this.add.image(width / 2, height / 2, 'battle_bg');
             bg.setDisplaySize(width, height);
-            if (isBoss) bg.setTint(0xaa4444);
+            if (isBoss) bg.setTint(0x660033);
         } else {
             const bg = this.add.graphics();
             if (isBoss) {
-                bg.fillGradientStyle(0x1a0000, 0x2d0000, 0x1a0000, 0x2d0000, 1);
+                bg.fillGradientStyle(0x1a0010, 0x2a0022, 0x1a0010, 0x2a0022, 1);
             } else {
-                bg.fillGradientStyle(0x0d1117, 0x1a1a2e, 0x0d1117, 0x16213e, 1);
+                bg.fillGradientStyle(C.BG_DEEP, C.BG_MAIN, C.BG_DEEP, C.BG_PANEL, 1);
             }
             bg.fillRect(0, 0, width, height);
         }
 
-        // Overlay semi-transparent sur la zone cartes pour les rendre lisibles
+        // Bandeaux dorés décoratifs (haut et bas de l'arène)
+        const deco = this.add.graphics();
+        deco.lineStyle(1, C.GOLD_BORDER, 0.25);
+        deco.lineBetween(0, height * 0.52, width, height * 0.52);
+
+        // Zone cartes en bas — fond premium
         const cardTopY = height - 185;
         const cardStrip = this.add.graphics();
-        cardStrip.fillStyle(0x000000, 0.45);
+        cardStrip.fillStyle(C.BG_PANEL, 0.88);
         cardStrip.fillRect(0, cardTopY, width, height - cardTopY);
-        cardStrip.lineStyle(1, 0x2a2a3e, 0.6);
+        // Ligne dorée séparatrice
+        cardStrip.lineStyle(2, C.GOLD_BORDER, 0.7);
         cardStrip.lineBetween(0, cardTopY, width, cardTopY);
+        // Reflet or léger en haut du bandeau
+        cardStrip.lineStyle(1, C.GOLD, 0.15);
+        cardStrip.lineBetween(0, cardTopY + 1, width, cardTopY + 1);
     }
 
     // ─── Enemies ──────────────────────────────────────────────────────────────
@@ -468,11 +488,18 @@ export class BattleScene extends Scene {
 
     private createBottomBar(player: import('../core/entities/Player').Player): void {
         this.bottomBar = new BottomBar(this, player);
+        this.deckPos    = this.bottomBar.deckPos;
+        this.discardPos = this.bottomBar.discardPos;
     }
 
     // ─── Main ─────────────────────────────────────────────────────────────────
 
-    private rebuildHand(): void {
+    /**
+     * Reconstruit la main.
+     * @param fromDeck  Si true, chaque carte reçoit une animation de pioche
+     *                  (part de la pile de pioche et vole vers sa position dans le fan).
+     */
+    private rebuildHand(fromDeck = false): void {
         this.cardViews.forEach(v => v.destroy());
         this.cardViews = [];
 
@@ -485,29 +512,26 @@ export class BattleScene extends Scene {
         const half   = (count - 1) / 2;
 
         // ── Fan parameters (style Slay the Spire) ────────────────────────────
-        // Rotation modérée : bords à ±MAX_ANGLE_DEG
         const MAX_ANGLE_DEG = 7;
-        // Arc vertical subtil
-        const ARC_LIFT = 4;
+        const ARC_LIFT      = 6;   // arc vertical plus marqué pour la lisibilité
 
-        // Espacement compact : fort chevauchement comme STS
-        const maxTotalW = width * 0.60;
+        // Espacement compact
+        const maxTotalW = width * 0.62;
         const spacing   = count > 1
-            ? Math.min(cardW * 0.52, (maxTotalW - cardW) / (count - 1))
+            ? Math.min(cardW * 0.54, (maxTotalW - cardW) / (count - 1))
             : 0;
         const totalW = (count - 1) * spacing + cardW;
         const startX = width / 2 - totalW / 2 + cardW / 2;
 
-        // Style STS : ~45 % de la carte visible, le reste enfoui dans le bas
-        //   visible = 0.45 * H  →  baseY = height + 0.05 * H
-        const baseY = height + CardView.HEIGHT * 0.05;
+        // Les cartes remontent davantage (on voit ~62 % de la hauteur)
+        const baseY = height - CardView.HEIGHT * 0.12;
 
         hand.forEach((card, i) => {
-            const offset   = i - half;                                     // -half … +half
+            const offset   = i - half;
             const angleDeg = count > 1 ? offset * (MAX_ANGLE_DEG / half) : 0;
             const rotation = Phaser.Math.DegToRad(angleDeg);
-            const yArc     = -Math.abs(offset) * ARC_LIFT;                // bords remontent
-            const depth    = i + 1;                                        // gauche derrière, droite devant
+            const yArc     = -Math.abs(offset) * ARC_LIFT;
+            const depth    = i + 1;
 
             const view = new CardView({
                 scene: this,
@@ -519,6 +543,11 @@ export class BattleScene extends Scene {
             view.updatePreview(this.engine.player, null);
             this.input.setDraggable(view);
             this.cardViews.push(view);
+
+            if (fromDeck) {
+                // Décalage en cascade : chaque carte part légèrement après la précédente
+                view.animateFromDeck(this.deckPos.x, this.deckPos.y, i * 75);
+            }
         });
     }
 
@@ -531,12 +560,24 @@ export class BattleScene extends Scene {
         this.input.on('dragstart', (_ptr: Phaser.Input.Pointer, obj: Phaser.GameObjects.GameObject) => {
             const view = obj as CardView;
             if (this.inputLocked || this.engine.phase !== CombatPhase.PLAYER_TURN) return;
-            this.draggedCard       = view;
-            this.dragOrigX         = view.x;
-            this.dragOrigY         = view.y;
-            this.dragOrigRotation  = view.rotation;
+            this.draggedCard      = view;
+            this.dragOrigX        = view.x;
+            this.dragOrigY        = view.y;
+            this.dragOrigRotation = view.rotation;
             view.setDepth(200);
-            this.tweens.add({ targets: view, scaleX: 1.08, scaleY: 1.08, rotation: 0, duration: 100, ease: 'Back.easeOut' });
+            // Levée de carte : scale + redressement rapide
+            this.tweens.add({
+                targets: view,
+                scaleX: 1.14, scaleY: 1.14,
+                rotation: 0,
+                y: view.y - 20,
+                duration: 120,
+                ease: 'Back.easeOut',
+            });
+            // Léger flash d'autres cartes pour guider l'œil
+            this.cardViews.filter(cv => cv !== view).forEach(cv => {
+                this.tweens.add({ targets: cv, alpha: 0.55, duration: 120 });
+            });
         });
 
         this.input.on('drag', (_ptr: Phaser.Input.Pointer, obj: Phaser.GameObjects.GameObject, x: number, y: number) => {
@@ -544,7 +585,7 @@ export class BattleScene extends Scene {
             view.x = x;
             view.y = y;
             if (!this.draggedCard) return;
-            this.drawBezierArrow(this.dragOrigX, this.dragOrigY - 20, x, y);
+            this.drawTargetingArrow(this.dragOrigX, this.dragOrigY - 20, x, y);
         });
 
         this.input.on('dragenter', (_ptr: Phaser.Input.Pointer, _obj: Phaser.GameObjects.GameObject, zone: Phaser.GameObjects.Zone) => {
@@ -584,10 +625,12 @@ export class BattleScene extends Scene {
             this.dragArrow.clear();
             this.showEnemyTargetRing(0, 0, false);
             this.hoveredEnemyId = null;
+            // Réafficher les autres cartes
+            this.cardViews.filter(cv => cv !== view).forEach(cv => {
+                this.tweens.add({ targets: cv, alpha: 1, duration: 150 });
+            });
             if (!dropped) {
                 const { height } = this.scale;
-                // Tolérance généreuse : lâcher n'importe où dans les 70% du haut joue la carte
-                // sur l'ennemi le plus proche (ou la cible sélectionnée)
                 if (view.y < height * 0.70) {
                     const nearest = this.findNearestEnemy(view.x, view.y);
                     this.playDraggedCard(view, nearest ?? this.selectedTarget ?? this.engine.enemies.find(e => !e.isDead)?.id ?? null);
@@ -597,7 +640,7 @@ export class BattleScene extends Scene {
                         x: this.dragOrigX, y: this.dragOrigY,
                         rotation: this.dragOrigRotation,
                         scaleX: 1, scaleY: 1,
-                        duration: 220, ease: 'Back.easeOut',
+                        duration: 240, ease: 'Back.easeOut',
                         onComplete: () => { view.setDepth(view.getBaseDepth()); },
                     });
                 }
@@ -621,65 +664,114 @@ export class BattleScene extends Scene {
         return best.enemy.id;
     }
 
-    // ── Flèche bezier ─────────────────────────────────────────────────────────
-    private drawBezierArrow(sx: number, sy: number, ex: number, ey: number): void {
+    // ── Réticule de ciblage ──────────────────────────────────────────────────
+    /**
+     * Dessine un indicateur de ciblage style FPS/TCG premium :
+     * ligne droite avec ticks, losanges runes, et réticule croisillon à la cible.
+     */
+    private drawTargetingArrow(sx: number, sy: number, ex: number, ey: number): void {
         const g = this.dragArrow;
         g.clear();
 
-        // Point de contrôle : légèrement au-dessus du milieu pour un arc naturel
-        const cpx = (sx + ex) / 2;
-        const cpy = Math.min(sy, ey) - 80;
+        const dx  = ex - sx;
+        const dy  = ey - sy;
+        const len = Math.max(Math.sqrt(dx * dx + dy * dy), 1);
+        const nx  = dx / len;   // direction normalisée
+        const ny  = dy / len;
+        const px  = -ny;        // perpendiculaire
+        const py  =  nx;
 
-        const STEPS = 32;
-        const pts: { x: number; y: number }[] = [];
-        for (let i = 0; i <= STEPS; i++) {
-            const t = i / STEPS;
-            const it = 1 - t;
-            pts.push({
-                x: it * it * sx + 2 * it * t * cpx + t * t * ex,
-                y: it * it * sy + 2 * it * t * cpy + t * t * ey,
-            });
+        // ── 1. Glow large et doux sous la ligne ───────────────────────────
+        g.lineStyle(22, 0xffffff, 0.04);
+        g.lineBetween(sx, sy, ex, ey);
+        g.lineStyle(12, C.GOLD, 0.09);
+        g.lineBetween(sx, sy, ex, ey);
+
+        // ── 2. Ligne principale blanche ───────────────────────────────────
+        g.lineStyle(1.5, 0xffffff, 0.88);
+        g.lineBetween(sx, sy, ex, ey);
+
+        // ── 3. Ticks perpendiculaires (plus courts vers la cible) ─────────
+        const TICK_STEP = 26;
+        const tickCount = Math.floor(len / TICK_STEP);
+        for (let i = 1; i < tickCount; i++) {
+            const t = i / tickCount;
+            const tx = sx + dx * t;
+            const ty = sy + dy * t;
+            const half  = 6 * (1 - t * 0.55);
+            const alpha = 0.75 * (1 - t * 0.25);
+            g.lineStyle(1.5, C.GOLD, alpha);
+            g.lineBetween(tx - px * half, ty - py * half, tx + px * half, ty + py * half);
         }
 
-        // Couche glow (large, transparente)
-        g.lineStyle(12, 0xe74c3c, 0.12);
-        g.beginPath(); g.moveTo(pts[0].x, pts[0].y);
-        for (let i = 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y);
-        g.strokePath();
-
-        // Ligne principale (épaisse, orange-dorée)
-        g.lineStyle(4, 0xf39c12, 0.88);
-        g.beginPath(); g.moveTo(pts[0].x, pts[0].y);
-        for (let i = 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y);
-        g.strokePath();
-
-        // Points espacés le long de la courbe (effet tirets stylisés)
-        for (let i = 4; i < pts.length - 4; i += 5) {
-            const t = i / STEPS;
-            g.fillStyle(0xffffff, 0.55 * t);
-            g.fillCircle(pts[i].x, pts[i].y, 2.5);
+        // ── 4. Losanges "runes" à intervalles réguliers ───────────────────
+        const RUNE_STEP = 64;
+        const runeCount = Math.floor(len / RUNE_STEP);
+        for (let i = 1; i <= runeCount; i++) {
+            const t = i / (runeCount + 1);
+            const rx = sx + dx * t;
+            const ry = sy + dy * t;
+            const r  = 4.5;
+            const a  = 0.4 + 0.5 * t;
+            g.fillStyle(C.GOLD, a);
+            // Losange orienté dans la direction de la ligne
+            g.fillTriangle(
+                rx + nx * r,        ry + ny * r,
+                rx + px * r * 0.55, ry + py * r * 0.55,
+                rx - nx * r,        ry - ny * r,
+            );
+            g.fillTriangle(
+                rx + nx * r,        ry + ny * r,
+                rx - px * r * 0.55, ry - py * r * 0.55,
+                rx - nx * r,        ry - ny * r,
+            );
         }
 
-        // Tête de flèche orientée selon la tangente finale
-        const tail = pts[pts.length - 4];
-        const tip  = pts[pts.length - 1];
-        const ang  = Math.atan2(tip.y - tail.y, tip.x - tail.x);
-        const tLen = 20;
-        const tAng = 0.42;
-        // Glow derrière la pointe
-        g.fillStyle(0xe74c3c, 0.25);
-        g.fillTriangle(
-            tip.x + Math.cos(ang) * (tLen + 8),           tip.y + Math.sin(ang) * (tLen + 8),
-            tip.x + Math.cos(ang - tAng) * (tLen + 8),   tip.y + Math.sin(ang - tAng) * (tLen + 8),
-            tip.x + Math.cos(ang + tAng) * (tLen + 8),   tip.y + Math.sin(ang + tAng) * (tLen + 8),
-        );
-        // Pointe solide
-        g.fillStyle(0xe74c3c, 0.95);
-        g.fillTriangle(
-            tip.x + Math.cos(ang) * tLen,         tip.y + Math.sin(ang) * tLen,
-            tip.x + Math.cos(ang - tAng) * tLen,  tip.y + Math.sin(ang - tAng) * tLen,
-            tip.x + Math.cos(ang + tAng) * tLen,  tip.y + Math.sin(ang + tAng) * tLen,
-        );
+        // ── 5. Réticule croisillon à la cible ─────────────────────────────
+        const R   = 28;
+        const GAP = 9;
+        const CROSS_EXT = 12;
+
+        // Cercle externe or (glow)
+        g.lineStyle(4, C.GOLD, 0.20);
+        g.strokeCircle(ex, ey, R + 4);
+
+        // Cercle principal or
+        g.lineStyle(2, C.GOLD, 0.95);
+        g.strokeCircle(ex, ey, R);
+
+        // Cercle interne blanc (fin)
+        g.lineStyle(1, 0xffffff, 0.45);
+        g.strokeCircle(ex, ey, R * 0.50);
+
+        // Croix avec gap au centre
+        g.lineStyle(2, C.GOLD, 1.0);
+        g.lineBetween(ex - R - CROSS_EXT, ey, ex - GAP, ey);
+        g.lineBetween(ex + GAP, ey, ex + R + CROSS_EXT, ey);
+        g.lineBetween(ex, ey - R - CROSS_EXT, ex, ey - GAP);
+        g.lineBetween(ex, ey + GAP, ex, ey + R + CROSS_EXT);
+
+        // 4 encoches diagonales dans le cercle
+        for (let i = 0; i < 4; i++) {
+            const a  = i * Math.PI / 2 + Math.PI / 4;
+            const r1 = R * 0.60;
+            const r2 = R * 0.92;
+            g.lineStyle(2, 0xffffff, 0.75);
+            g.lineBetween(
+                ex + Math.cos(a) * r1, ey + Math.sin(a) * r1,
+                ex + Math.cos(a) * r2, ey + Math.sin(a) * r2,
+            );
+        }
+
+        // Point central blanc
+        g.fillStyle(0xffffff, 1.0);
+        g.fillCircle(ex, ey, 3.5);
+
+        // ── 6. Point d'origine (carte) ────────────────────────────────────
+        g.lineStyle(2, C.GOLD, 0.65);
+        g.strokeCircle(sx, sy, 8);
+        g.fillStyle(0xffffff, 0.85);
+        g.fillCircle(sx, sy, 3);
     }
 
     // ── Ring de ciblage (hover drag ou ennemi sélectionné) ────────────────────
@@ -690,15 +782,17 @@ export class BattleScene extends Scene {
 
         const drawRing = (alpha: number) => {
             this.targetRingGfx.clear();
-            this.targetRingGfx.lineStyle(2.5, 0xe74c3c, alpha);
+            // Cercle or principal
+            this.targetRingGfx.lineStyle(2.5, C.GOLD_BORDER, alpha);
             this.targetRingGfx.strokeCircle(x, y, 58);
-            this.targetRingGfx.lineStyle(1.5, 0xf39c12, alpha * 0.6);
-            this.targetRingGfx.strokeCircle(x, y, 68);
-            // Quatre petites encoches aux coins
+            // Cercle glow or externe
+            this.targetRingGfx.lineStyle(1.5, C.GOLD, alpha * 0.5);
+            this.targetRingGfx.strokeCircle(x, y, 70);
+            // Quatre encoches dorées aux coins
             for (let i = 0; i < 4; i++) {
                 const a = (i * Math.PI / 2) + Math.PI / 4;
-                const r1 = 56, r2 = 62;
-                this.targetRingGfx.lineStyle(2, 0xffffff, alpha * 0.8);
+                const r1 = 56, r2 = 64;
+                this.targetRingGfx.lineStyle(2, C.GOLD, alpha * 0.9);
                 this.targetRingGfx.lineBetween(
                     x + Math.cos(a) * r1, y + Math.sin(a) * r1,
                     x + Math.cos(a) * r2, y + Math.sin(a) * r2,
@@ -721,40 +815,107 @@ export class BattleScene extends Scene {
 
     // ── Effet d'impact sur l'ennemi ───────────────────────────────────────────
     private showImpactEffect(x: number, y: number): void {
-        // Anneau d'onde de choc
-        const ring = this.add.graphics().setDepth(102);
-        ring.lineStyle(5, 0xffffff, 1);
-        ring.strokeCircle(x, y, 14);
+        const { width, height } = this.scale;
+
+        // ── 1. Flash écran (voile blanc bref) ─────────────────────────────
+        const screenFlash = this.add.graphics().setDepth(200);
+        screenFlash.fillStyle(0xffffff, 0.18);
+        screenFlash.fillRect(0, 0, width, height);
         this.tweens.add({
-            targets: ring, scaleX: 3.5, scaleY: 3.5, alpha: 0,
-            duration: 380, ease: 'Power2',
-            onComplete: () => ring.destroy(),
+            targets: screenFlash, alpha: 0,
+            duration: 200, ease: 'Power2',
+            onComplete: () => screenFlash.destroy(),
         });
-        // Flash orange central
-        const flash = this.add.graphics().setDepth(103);
-        flash.fillStyle(0xf39c12, 0.92);
-        flash.fillCircle(x, y, 22);
+
+        // ── 2. Trois anneaux concentriques décalés ─────────────────────────
+        const ringData = [
+            { r: 12, thick: 6, color: 0xffffff, delay: 0,   dur: 360 },
+            { r: 18, thick: 4, color: C.GOLD,   delay: 55,  dur: 420 },
+            { r: 26, thick: 3, color: 0xff8c00,  delay: 110, dur: 500 },
+        ];
+        for (const rd of ringData) {
+            const ring = this.add.graphics().setDepth(104);
+            ring.lineStyle(rd.thick, rd.color, 1);
+            ring.strokeCircle(x, y, rd.r);
+            this.tweens.add({
+                targets: ring, scaleX: 5, scaleY: 5, alpha: 0,
+                delay: rd.delay, duration: rd.dur, ease: 'Power2',
+                onComplete: () => ring.destroy(),
+            });
+        }
+
+        // ── 3. Flash central blanc (éclat) ────────────────────────────────
+        const flashCore = this.add.graphics().setDepth(106);
+        flashCore.fillStyle(0xffffff, 1);
+        flashCore.fillCircle(x, y, 22);
+        flashCore.fillStyle(C.GOLD, 0.7);
+        flashCore.fillCircle(x, y, 14);
         this.tweens.add({
-            targets: flash, scaleX: 2.2, scaleY: 2.2, alpha: 0,
-            duration: 220, ease: 'Power3',
-            onComplete: () => flash.destroy(),
+            targets: flashCore, scaleX: 2.8, scaleY: 2.8, alpha: 0,
+            duration: 230, ease: 'Power3',
+            onComplete: () => flashCore.destroy(),
         });
-        // Éclats radiaux (8 traits courts)
-        const sparks = this.add.graphics().setDepth(101);
-        for (let i = 0; i < 8; i++) {
-            const a = (i / 8) * Math.PI * 2;
-            const r0 = 18, r1 = 38;
-            sparks.lineStyle(2, i % 2 === 0 ? 0xffffff : 0xf39c12, 0.9);
-            sparks.lineBetween(
+
+        // ── 4. Éclats radiaux principaux (12 traits longs) ────────────────
+        const sparks1 = this.add.graphics().setDepth(103);
+        for (let i = 0; i < 12; i++) {
+            const a  = (i / 12) * Math.PI * 2;
+            const r0 = 14;
+            const r1 = 45 + (i % 3 === 0 ? 20 : 0);
+            sparks1.lineStyle(i % 2 === 0 ? 3 : 1.5, i % 3 === 0 ? 0xffffff : C.GOLD, 0.95);
+            sparks1.lineBetween(
                 x + Math.cos(a) * r0, y + Math.sin(a) * r0,
                 x + Math.cos(a) * r1, y + Math.sin(a) * r1,
             );
         }
         this.tweens.add({
-            targets: sparks, scaleX: 2, scaleY: 2, alpha: 0,
-            duration: 300, ease: 'Power2',
-            onComplete: () => sparks.destroy(),
+            targets: sparks1, scaleX: 2.5, scaleY: 2.5, alpha: 0,
+            duration: 380, ease: 'Power2',
+            onComplete: () => sparks1.destroy(),
         });
+
+        // ── 5. Éclats secondaires décalés (8 traits courts diagonal) ──────
+        const sparks2 = this.add.graphics().setDepth(102);
+        for (let i = 0; i < 8; i++) {
+            const a  = (i / 8) * Math.PI * 2 + Math.PI / 8;
+            const r0 = 22;
+            const r1 = 55 + Math.random() * 20;
+            sparks2.lineStyle(1.5, 0xff8c00, 0.85);
+            sparks2.lineBetween(
+                x + Math.cos(a) * r0, y + Math.sin(a) * r0,
+                x + Math.cos(a) * r1, y + Math.sin(a) * r1,
+            );
+        }
+        this.tweens.add({
+            targets: sparks2, scaleX: 2.2, scaleY: 2.2, alpha: 0,
+            delay: 50, duration: 450, ease: 'Power2',
+            onComplete: () => sparks2.destroy(),
+        });
+
+        // ── 6. Particules projetées (12 petits carrés/losanges) ───────────
+        for (let i = 0; i < 12; i++) {
+            const particle = this.add.graphics().setDepth(105);
+            const a     = Math.random() * Math.PI * 2;
+            const dist  = 50 + Math.random() * 70;
+            const size  = 2.5 + Math.random() * 4;
+            const color = Math.random() > 0.45 ? 0xffffff : (Math.random() > 0.5 ? C.GOLD : 0xff8c00);
+            particle.fillStyle(color, 1);
+            // Losange
+            particle.fillTriangle( 0, -size,  size * 0.6, 0,  0,  size);
+            particle.fillTriangle( 0, -size, -size * 0.6, 0,  0,  size);
+            particle.setPosition(x, y);
+            particle.setRotation(a);
+            this.tweens.add({
+                targets: particle,
+                x: x + Math.cos(a) * dist,
+                y: y + Math.sin(a) * dist,
+                scaleX: 0.1, scaleY: 0.1,
+                alpha: 0,
+                duration: 450 + Math.random() * 200,
+                ease: 'Power2',
+                onComplete: () => particle.destroy(),
+            });
+        }
     }
 
     private playDraggedCard(view: CardView, targetId: string | null): void {
@@ -772,24 +933,36 @@ export class BattleScene extends Scene {
         this.triggerPlayerAnim(view.card.definition.type);
 
         // Reset scale des ennemis
-        this.enemyViews.forEach(ev => { this.tweens.killTweensOf(ev); ev.setAlpha(1); this.tweens.add({ targets: ev, scaleX: 1, scaleY: 1, duration: 80 }); });
+        this.enemyViews.forEach(ev => {
+            this.tweens.killTweensOf(ev);
+            ev.setAlpha(1);
+            this.tweens.add({ targets: ev, scaleX: 1, scaleY: 1, duration: 80 });
+        });
 
         const resolvedTargetId = targetId ?? this.engine.enemies.find(e => !e.isDead)?.id ?? null;
         const targetEv = this.enemyViews.find(v => v.enemy.id === resolvedTargetId);
         const isAttack = view.card.definition.type === CardType.ATTACK;
 
-        // Pour les attaques : la carte vole vers l'ennemi → impact → résolution
-        const tx = isAttack && targetEv ? targetEv.x : undefined;
-        const ty = isAttack && targetEv ? targetEv.y : undefined;
+        // Retire la carte du tableau avant d'animer pour que rebuildHand ne la détruise pas
+        this.cardViews = this.cardViews.filter(cv => cv !== view);
 
-        view.playCardAnimation(() => {
-            if (isAttack && tx !== undefined && ty !== undefined) {
-                this.showImpactEffect(tx, ty);
-            }
+        const onResolved = () => {
             const played = this.engine.playCard(view.card.instanceId, resolvedTargetId ?? undefined);
             if (played) this.refreshAllUI();
             this.inputLocked = false;
-        }, tx, ty);
+            view.destroy();
+        };
+
+        if (isAttack && targetEv) {
+            // Attaque : vole vers la cible → impact → résolution
+            view.playCardAnimation(() => {
+                this.showImpactEffect(targetEv.x, targetEv.y);
+                onResolved();
+            }, targetEv.x, targetEv.y);
+        } else {
+            // Compétence / Pouvoir : vole vers la défausse
+            view.playDiscardAnimation(this.discardPos.x, this.discardPos.y, onResolved);
+        }
     }
 
     private returnCard(view: CardView): void {
@@ -819,18 +992,26 @@ export class BattleScene extends Scene {
 
         this.inputLocked = true;
         this.triggerPlayerAnim(card.definition.type);
+        view.setDepth(200);
 
-        const tx = isAttack && targetEv ? targetEv.x : undefined;
-        const ty = isAttack && targetEv ? targetEv.y : undefined;
+        // Retire la carte du tableau avant l'animation
+        this.cardViews = this.cardViews.filter(cv => cv !== view);
 
-        view.playCardAnimation(() => {
-            if (isAttack && tx !== undefined && ty !== undefined) {
-                this.showImpactEffect(tx, ty);
-            }
+        const onResolved = () => {
             const played = this.engine.playCard(card.instanceId, resolvedTargetId ?? undefined);
             if (played) this.refreshAllUI();
             this.inputLocked = false;
-        }, tx, ty);
+            view.destroy();
+        };
+
+        if (isAttack && targetEv) {
+            view.playCardAnimation(() => {
+                this.showImpactEffect(targetEv.x, targetEv.y);
+                onResolved();
+            }, targetEv.x, targetEv.y);
+        } else {
+            view.playDiscardAnimation(this.discardPos.x, this.discardPos.y, onResolved);
+        }
     }
 
     /** Déclenche l'animation du joueur selon le type de carte joué. */
@@ -867,28 +1048,39 @@ export class BattleScene extends Scene {
     // ─── End Turn ─────────────────────────────────────────────────────────────
 
     private createEndTurnButton(): void {
-        const { width, height: _h } = this.scale;
-        const height = _h;
-        const btn = this.add.container(width - 80, height / 2);
+        const { width, height } = this.scale;
+        const bw = sc(120), bh = sc(58), br = sc(10);
+        const btn = this.add.container(width - sc(75), height / 2).setDepth(15);
 
         const bg = this.add.graphics();
         const drawBg = (hover: boolean) => {
             bg.clear();
-            bg.fillStyle(hover ? 0x27ae60 : 0x1e8449, 1);
-            bg.fillRoundedRect(-55, -30, 110, 60, 12);
-            bg.lineStyle(2, hover ? 0x2ecc71 : 0x27ae60, 1);
-            bg.strokeRoundedRect(-55, -30, 110, 60, 12);
+            // Ombre
+            bg.fillStyle(0x000000, 0.5);
+            bg.fillRoundedRect(-bw / 2 + sc(3), -bh / 2 + sc(3), bw, bh, br);
+            // Fond
+            bg.fillStyle(hover ? C.BG_SURFACE : C.BG_PANEL, 1);
+            bg.fillRoundedRect(-bw / 2, -bh / 2, bw, bh, br);
+            // Bordure or
+            bg.lineStyle(hover ? 2.5 : 1.5, hover ? C.GOLD : C.GOLD_BORDER, 1);
+            bg.strokeRoundedRect(-bw / 2, -bh / 2, bw, bh, br);
+            // Reflet interne sur hover
+            if (hover) {
+                bg.lineStyle(1, C.GOLD, 0.22);
+                bg.strokeRoundedRect(-bw / 2 + sc(2), -bh / 2 + sc(2), bw - sc(4), bh - sc(4), br - 2);
+            }
         };
         drawBg(false);
 
         const label = this.add.text(0, 0, 'Fin\nde Tour', {
-            fontSize: '14px', fontFamily: 'Georgia, serif',
-            color: '#fff', align: 'center',
+            fontSize: fz(13), fontFamily: 'Georgia, serif', fontStyle: 'bold',
+            color: C.S_GOLD, align: 'center',
+            stroke: '#000', strokeThickness: 2,
         }).setOrigin(0.5);
 
         btn.add([bg, label]);
 
-        const zone = this.add.zone(0, 0, 110, 60).setInteractive({ cursor: 'pointer' });
+        const zone = this.add.zone(0, 0, bw, bh).setInteractive({ cursor: 'pointer' });
         zone.on('pointerover', () => drawBg(true));
         zone.on('pointerout', () => drawBg(false));
         zone.on('pointerup', () => {
@@ -907,23 +1099,33 @@ export class BattleScene extends Scene {
 
     private createLogPanel(): void {
         const { width } = this.scale;
+        const lw = sc(190), lh = sc(200), lx = width - lw - sc(8), ly = sc(44);
         const bg = this.add.graphics();
-        bg.fillStyle(0x000000, 0.5);
-        bg.fillRoundedRect(width - 200, 40, 190, 200, 8);
+        bg.fillStyle(C.BG_PANEL, 0.88);
+        bg.fillRoundedRect(lx, ly, lw, lh, sc(8));
+        bg.lineStyle(1, C.GOLD_DIM, 0.7);
+        bg.strokeRoundedRect(lx, ly, lw, lh, sc(8));
+        // Titre "Journal"
+        this.add.text(lx + lw / 2, ly + sc(10), 'Journal de combat', {
+            fontSize: fz(10), fontFamily: 'Georgia, serif', fontStyle: 'italic',
+            color: C.S_GOLD, stroke: '#000', strokeThickness: 1, resolution: 2,
+        }).setOrigin(0.5).setDepth(11);
 
-        this.logText = this.add.text(width - 194, 48, '', {
-            fontSize: '9px',
-            fontFamily: 'monospace',
-            color: '#bdc3c7',
-            wordWrap: { width: 180 },
-        });
+        this.logText = this.add.text(lx + sc(6), ly + sc(22), '', {
+            fontSize: fz(9),
+            fontFamily: 'Georgia, serif',
+            color: C.S_MUTED,
+            wordWrap: { width: lw - sc(12) },
+            resolution: 2,
+        }).setDepth(11);
     }
 
     private createPhaseText(): void {
-        this.phaseText = this.add.text(this.scale.width / 2, 36, '', {
-            fontSize: '14px',
+        this.phaseText = this.add.text(this.scale.width / 2, sc(36), '', {
+            fontSize: fz(14),
             fontFamily: 'Georgia, serif',
-            color: '#f39c12',
+            fontStyle: 'bold',
+            color: C.S_GOLD,
             stroke: '#000',
             strokeThickness: 2,
         }).setOrigin(0.5).setDepth(20);
@@ -938,7 +1140,14 @@ export class BattleScene extends Scene {
         });
 
         this.engine.on('card_drawn', () => {
-            this.rebuildHand();
+            // La main sera reconstruite avec animation lors du passage en PLAYER_TURN.
+            // Pour un tirage en milieu de tour (effet de carte) : on rebuild directement.
+            if (this.engine.phase === CombatPhase.PLAYER_TURN) {
+                this.rebuildHand(true);
+            } else {
+                // Mise à jour du compteur de pioche seulement
+                this.bottomBar?.refresh();
+            }
         });
 
         this.engine.on('card_played', () => {
@@ -1022,7 +1231,11 @@ export class BattleScene extends Scene {
         this.phaseText.setText(label);
 
         if (phase === CombatPhase.PLAYER_TURN) {
-            this.refreshAllUI();
+            // rebuildHand(true) déclenche l'animation de pioche (cartes volent vers la main)
+            this.rebuildHand(true);
+            this.refreshEnemies();
+            this.playerHUD?.refresh();
+            this.bottomBar?.refresh();
         }
         if (phase === CombatPhase.ENEMY_TURN) {
             this.cardViews.forEach(v => v.disableInteractive());
@@ -1092,24 +1305,53 @@ export class BattleScene extends Scene {
             y = this.scale.height * ROAD_RATIO_PLAYER - 90;
         } else {
             const view = this.enemyViews.find(v => v.enemy.id === targetId);
-            if (view) { x = view.x; y = view.y - 30; }
+            if (view) {
+                // Coin haut-gauche du GIF (~65px = GIF_HALF)
+                x = view.x - 65;
+                y = view.y - 65;
+            }
         }
 
-        const dmgText = this.add.text(x + (Math.random() * 30 - 15), y, `-${amount}`, {
-            fontSize: '22px',
+        const dmgText = this.add.text(x, y, `-${amount}`, {
+            fontSize: fz(82),
             fontFamily: 'Georgia, serif',
-            color: '#e74c3c',
-            stroke: '#000',
-            strokeThickness: 3,
-        }).setOrigin(0.5).setDepth(30);
+            fontStyle: 'bold italic',
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: sc(10),
+            resolution: 2,
+        }).setOrigin(0.5).setDepth(150);
 
+        // Phase 1 — pop : scale 0 → 1 avec rebond rapide
+        dmgText.setScale(0.25);
         this.tweens.add({
             targets: dmgText,
-            y: dmgText.y - 50,
-            alpha: 0,
-            duration: 800,
-            ease: 'Power2',
-            onComplete: () => dmgText.destroy(),
+            scaleX: 1,
+            scaleY: 1,
+            duration: 130,
+            ease: 'Back.easeOut',
+            onComplete: () => {
+                // Phase 2 — pause puis envol vers le haut-gauche
+                this.tweens.add({
+                    targets: dmgText,
+                    alpha: 1,
+                    duration: 350,
+                    ease: 'Linear',
+                    onComplete: () => {
+                        this.tweens.add({
+                            targets: dmgText,
+                            x: dmgText.x - 140,
+                            y: dmgText.y - 180,
+                            scaleX: 0.55,
+                            scaleY: 0.55,
+                            alpha: 0,
+                            duration: 800,
+                            ease: 'Cubic.easeOut',
+                            onComplete: () => dmgText.destroy(),
+                        });
+                    },
+                });
+            },
         });
     }
 
