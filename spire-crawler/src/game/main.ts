@@ -12,8 +12,8 @@ import { DeckViewer } from './scenes/DeckViewer';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    width: 1920,
-    height: 1080,
+    width: 1024,
+    height: 768,
     parent: 'game-container',
     backgroundColor: '#0d1117',
     render: {
