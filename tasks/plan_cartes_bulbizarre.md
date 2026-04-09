@@ -56,9 +56,9 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 | # | Nom | Type | Coût | Effet | Effet+ | Archétype |
 |---|-----|------|------|-------|--------|-----------|
-| 1 | **Frappe** ×4 | Attaque | 1 | Inflige **8** dégâts | Inflige **10** dégâts | Universel |
-| 2 | **Défense** ×4 | Compétence | 1 | Gagne **7** Défense | Gagne **9** Défense | Défense |
-| 3 | **Poudre Toxik** | Compétence | 1 | Applique **3** Poison | Applique **5** Poison | Poison |
+| 1 | **Frappe** ×4 | Attaque | 1 | Inflige **6** dégâts | Inflige **9** dégâts | Universel |
+| 2 | **Défense** ×4 | Compétence | 1 | Gagne **5** Défense | Gagne **8** Défense | Défense |
+| 3 | **Poudre Toxik** | Compétence | 1 | Applique **2** Poison | Applique **4** Poison | Poison |
 | 4 | **Poudre Dodo** | Compétence | 2 | Applique **Sommeil**. S'épuise | Ne s'épuise plus | Statut |
 
 ---
@@ -73,8 +73,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### BOMBE BEURK *(Sludge Bomb)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **7** dégâts. Applique **3** Poison.
-- **Effet+** : Inflige **9** dégâts. Applique **4** Poison.
+- **Effet** : Inflige **6** dégâts. Applique **2** Poison.
+- **Effet+** : Inflige **8** dégâts. Applique **3** Poison.
 - **Synergies** : Bombe Acide, Façade, Toxik
 - **Note** : Carte hybride attaque/poison idéale pour ouvrir un tour.
 
@@ -100,8 +100,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### FAÇADE *(Facade)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **8** dégâts. Si l'ennemi est **Empoisonné, Paralysé ou Endormi** : inflige **14** dégâts à la place.
-- **Effet+** : **10** / **18** dégâts.
+- **Effet** : Inflige **6** dégâts. Si l'ennemi est **Empoisonné, Paralysé ou Endormi** : inflige **12** dégâts à la place.
+- **Effet+** : **8** / **16** dégâts.
 - **Synergies** : Poudre Toxik, Poudre Dodo, Plaquage
 - **Note** : Récompense fortement l'application préalable d'un statut. Symbole de la synergie Statut→Attaque.
 
@@ -109,8 +109,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### PLAQUAGE *(Body Slam)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **8** dégâts. **25%** de chance d'appliquer **Paralysie**.
-- **Effet+** : Inflige **10** dégâts. **40%** de Paralysie.
+- **Effet** : Inflige **7** dégâts. **25%** de chance d'appliquer **Paralysie**.
+- **Effet+** : Inflige **9** dégâts. **40%** de Paralysie.
 - **Synergies** : Façade (si paralysie se déclenche), Danse Lames
 - **Note** : L'aspect aléatoire est intentionnel : chaque Plaquage joué est une chance d'enchaîner avec Façade au prochain tour.
 
@@ -122,8 +122,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### FOUET LIANES *(Vine Whip)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **8** dégâts.
-- **Effet+** : Inflige **11** dégâts.
+- **Effet** : Inflige **7** dégâts.
+- **Effet+** : Inflige **10** dégâts.
 - **Synergies** : Croissance (bénéficie du buff), Danse Lames
 - **Note** : Attaque de base solide, bénéficie naturellement de Croissance.
 
@@ -131,8 +131,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### CHARGE *(Tackle)*
 - **Type** : Attaque | **Coût** : 0 | **Rareté** : Commune
-- **Effet** : Inflige **5** dégâts.
-- **Effet+** : Inflige **7** dégâts.
+- **Effet** : Inflige **4** dégâts.
+- **Effet+** : Inflige **6** dégâts.
 - **Synergies** : Danse Lames, Croissance
 - **Note** : Gratuite. En fin de tour quand il ne reste plus d'énergie, elle passe quand même.
 
@@ -149,8 +149,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### FEUILLE MAGIK *(Magical Leaf)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **8** dégâts. **Ne peut pas rater** (ignore l'Esquive).
-- **Effet+** : Inflige **11** dégâts.
+- **Effet** : Inflige **7** dégâts. **Ne peut pas rater** (ignore l'Esquive).
+- **Effet+** : Inflige **10** dégâts.
 - **Synergies** : Contre les ennemis avec mécaniques d'esquive (futurs boss)
 - **Note** : Fiabilité totale. Aucune mauvaise surprise.
 
@@ -167,8 +167,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### DÉSHERBAFFE *(Trailblaze)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **7** dégâts. **Pioche 1 carte**.
-- **Effet+** : Inflige **9** dégâts. Pioche **1 carte**.
+- **Effet** : Inflige **6** dégâts. **Pioche 1 carte**.
+- **Effet+** : Inflige **8** dégâts. Pioche **1 carte**.
 - **Synergies** : N'importe quel combo qui a besoin de cycler rapidement
 - **Note** : Génère de la valeur de main. Attaque ET piocher en même temps = efficacité maximale.
 
@@ -189,8 +189,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### VAMPIGRAINE *(Leech Seed)*
 - **Type** : Pouvoir | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : À la fin de **chaque tour**, l'ennemi perd **3 PV** et vous récupérez **3 PV**.
-- **Effet+** : **4 PV** par tour.
+- **Effet** : À la fin de **chaque tour**, l'ennemi perd **2 PV** et vous récupérez **2 PV**.
+- **Effet+** : **3 PV** par tour.
 - **Synergies** : Éco-Sphère (bonus dégâts), Enracinement (double sustain), Amnésie
 - **Note** : Le cœur de l'archétype Graine. Passive permanente qui s'accumule au fil des tours.
 
@@ -198,8 +198,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### SYNTHÈSE *(Synthesis)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Récupère **8 PV**.
-- **Effet+** : Récupère **12 PV**.
+- **Effet** : Récupère **6 PV**.
+- **Effet+** : Récupère **10 PV**.
 - **Synergies** : Vampigraine (sustain cumulatif), Bélier/Damoclès (compense l'auto-dégât)
 - **Note** : Soin simple et efficace. Indispensable dans les decks qui s'auto-blessent.
 
@@ -207,8 +207,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### ABRI *(Protect)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Gagne **12 Défense**. S'épuise.
-- **Effet+** : Gagne **16 Défense**. Ne s'épuise plus.
+- **Effet** : Gagne **10 Défense**. S'épuise.
+- **Effet+** : Gagne **15 Défense**. Ne s'épuise plus.
 - **Synergies** : Mur Lumière, Amnésie, Clonage
 - **Note** : Bloque un coup fort en urgence. Non améliorée = usage unique tactique.
 
@@ -216,8 +216,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### MUR LUMIÈRE *(Light Screen)*
 - **Type** : Pouvoir | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Réduit tous les dégâts reçus de **3** pendant **3 tours**.
-- **Effet+** : Réduit de **4** pendant **4 tours**.
+- **Effet** : Réduit tous les dégâts reçus de **2** pendant **3 tours**.
+- **Effet+** : Réduit de **3** pendant **4 tours**.
 - **Synergies** : Amnésie, Abri, Rune Protect
 - **Note** : Passif temporaire défensif. Idéal face à des ennemis qui attaquent plusieurs fois.
 
@@ -247,8 +247,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### CANON GRAINE *(Seed Bomb)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **9** dégâts. Si l'ennemi n'a **aucun Pouvoir actif** : inflige **14** dégâts.
-- **Effet+** : **12** / **18** dégâts.
+- **Effet** : Inflige **8** dégâts. Si l'ennemi n'a **aucun Pouvoir actif** : inflige **13** dégâts.
+- **Effet+** : **10** / **17** dégâts.
 - **Synergies** : Faux-Chage (idéale contre boss propres), Poudre Dodo (avant d'appliquer des états)
 - **Note** : Récompense de frapper un ennemi "vierge" de buffs.
 
@@ -275,8 +275,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### TOXIK *(Toxic)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Peu Commune
-- **Effet** : Applique **Poison Sévère** : commence à **5** stacks et augmente de **2** chaque tour (au lieu de diminuer).
-- **Effet+** : Commence à **7** stacks.
+- **Effet** : Applique **Poison Sévère** : commence à **4** stacks et augmente de **2** chaque tour (au lieu de diminuer).
+- **Effet+** : Commence à **6** stacks.
 - **Synergies** : Vampigraine, Façade, Bombe Beurk
 - **Note** : Carte signature de l'archétype Poison. Le plus tôt jouée, le plus elle fait mal.
 
@@ -302,8 +302,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### LAME FEUILLE *(Leaf Blade — move Pokémon universel Plante)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **15** dégâts. Si l'ennemi est **Empoisonné** : inflige **22** dégâts à la place.
-- **Effet+** : **18** / **28** dégâts.
+- **Effet** : Inflige **14** dégâts. Si l'ennemi est **Empoisonné** : inflige **20** dégâts à la place.
+- **Effet+** : **17** / **24** dégâts.
 - **Synergies** : Toxik, Bombe Beurk, Poudre Toxik
 - **Note** : Finisher de l'archétype Poison. Jouer après avoir empoisonné = burst massif.
 
@@ -311,8 +311,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### TOURBILLON FEUILLES *(Leaf Storm — move Pokémon)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **20** dégâts. Réduit votre **Croissance** de 2 (coût offensif).
-- **Effet+** : Inflige **24** dégâts. Réduit Croissance de 1.
+- **Effet** : Inflige **17** dégâts. Réduit votre **Croissance** de 2 (coût offensif).
+- **Effet+** : Inflige **22** dégâts. Réduit Croissance de 1.
 - **Synergies** : À jouer AVANT de stacker Croissance, ou avec Rengorgement pour récupérer.
 - **Note** : Puissance immédiate au prix du buff futur. Choix stratégique : burst ou montée en puissance ?
 
@@ -324,8 +324,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### LANCE-SOLEIL *(Solar Beam)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : **Ce tour** : entre en **Chargement** (marque la carte). **Au début du prochain tour** : inflige automatiquement **26** dégâts (sans coût d'énergie).
-- **Effet+** : Inflige **32** dégâts au déclenchement.
+- **Effet** : **Ce tour** : entre en **Chargement** (marque la carte). **Au début du prochain tour** : inflige automatiquement **30** dégâts (sans coût d'énergie).
+- **Effet+** : Inflige **36** dégâts au déclenchement.
 - **Synergies** : Poudre Dodo / Spore (charger pendant que l'ennemi dort), Rune Protect
 - **Note** : La carte la plus iconique. Demande de la planification mais offre un ratio dommages/énergie exceptionnel.
 
@@ -360,8 +360,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 
 #### DANSE FLEURS *(Petal Dance)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Peu Commune
-- **Effet** : Inflige **6 dégâts × 3 fois**. Après : **Confusion** pendant 1 tour (les cartes jouées ce tour sont choisies aléatoirement dans la main).
-- **Effet+** : **8 × 3**. Pas de Confusion.
+- **Effet** : Inflige **5 dégâts × 3 fois** (15 total). Après : **Confusion** pendant 1 tour (les cartes jouées ce tour sont choisies aléatoirement dans la main).
+- **Effet+** : **6 × 3** (18 total). Pas de Confusion.
 - **Synergies** : Balle Graine (multi-hit), Vampigraine (drain par hit)
 - **Note** : Gros burst mais risque de jouer des cartes non désirées. Améliorée = carte excellente sans inconvénient.
 
@@ -502,7 +502,7 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 - **Effet** : Ce combat, **Lance-Soleil ne nécessite plus de tour de chargement** (inflige directement ses dégâts).
 - **Effet+** : De plus, Lance-Soleil inflige **+8 dégâts**.
 - **Synergies** : Lance-Soleil (rendu instantané), Croissance
-- **Note** : Carte qui transforme Lance-Soleil en attaque 3 coûts de 26+ dégâts immédiats. Combo emblématique.
+- **Note** : Carte qui transforme Lance-Soleil en attaque 3 coûts de 30+ dégâts immédiats. Combo emblématique.
 
 ---
 
@@ -610,8 +610,8 @@ Ces cartes forment le deck de base. Simples, fonctionnelles, représentent chaqu
 ```
 Croissance × 2 → Danse Lames → Force Soleil → Lance-Soleil
 ```
-**Résultat** : Lance-Soleil instantané à 26 + (Croissance × 2) + (Force × 2) dégâts.
-> Exemple : 2 Croissance + 2 Force = 26 + 4 + 4 = **34 dégâts en un coup**, sans attendre un tour.
+**Résultat** : Lance-Soleil instantané à 30 + (Croissance × 2) + (Force × 2) dégâts.
+> Exemple : 2 Croissance + 2 Force = 30 + 4 + 4 = **38 dégâts en un coup**, sans attendre un tour.
 
 ---
 
@@ -619,7 +619,7 @@ Croissance × 2 → Danse Lames → Force Soleil → Lance-Soleil
 ```
 Toxik → Pluie Acide → Venin Mortel
 ```
-**Résultat** : Toxik applique 5 stacks (augmente de 2/tour). Pluie Acide ajoute 3/tour. Au tour 3 = ~16 stacks. Venin Mortel les **double** → 32 dégâts/tour par le seul poison.
+**Résultat** : Toxik applique 4 stacks (augmente de 2/tour). Pluie Acide ajoute 3/tour. Au tour 3 = ~14 stacks. Venin Mortel les **double** → 28 dégâts/tour par le seul poison.
 
 ---
 

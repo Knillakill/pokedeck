@@ -59,8 +59,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 | # | Nom | Type | Coût | Effet | Effet+ | Archétype |
 |---|-----|------|------|-------|--------|-----------|
-| 1 | **Griffe** ×4 | Attaque | 1 | Inflige **8** dégâts | Inflige **10** dégâts | Universel |
-| 2 | **Esquive** ×4 | Compétence | 1 | Gagne **7** Défense | Gagne **9** Défense | Défense |
+| 1 | **Griffe** ×4 | Attaque | 1 | Inflige **6** dégâts | Inflige **9** dégâts | Universel |
+| 2 | **Esquive** ×4 | Compétence | 1 | Gagne **5** Défense | Gagne **8** Défense | Défense |
 | 3 | **Braise** | Compétence | 1 | Applique **Brûlure**. S'épuise | Ne s'épuise plus | Brûlure |
 | 4 | **Rugissement** | Compétence | 1 | Applique **Peur** (ennemi -25% dégâts, 2 tours) | 3 tours | Statut |
 
@@ -83,8 +83,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### COUP DE FEU *(Flame Burst)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **7** dégâts. Si l'ennemi est **déjà brûlé** : inflige **11** dégâts à la place.
-- **Effet+** : **9** / **15** dégâts.
+- **Effet** : Inflige **6** dégâts. Si l'ennemi est **déjà brûlé** : inflige **11** dégâts à la place.
+- **Effet+** : **8** / **13** dégâts.
 - **Synergies** : Braise, Feu Follet, tout ce qui applique Brûlure
 - **Note** : Carte qui récompense immédiatement d'avoir brûlé l'ennemi. Braise → Coup de Feu = combo de base.
 
@@ -123,8 +123,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### GRIFFE *(Scratch)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **8** dégâts.
-- **Effet+** : Inflige **11** dégâts.
+- **Effet** : Inflige **7** dégâts.
+- **Effet+** : Inflige **9** dégâts.
 - **Synergies** : Fureur (bénéficie du buff), Danse-Lames
 - **Note** : Attaque de base simple. Bénéficie naturellement de tous les buffs offensifs.
 
@@ -157,7 +157,7 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 ---
 
-#### GRIMACE *(Scary Face)*
+#### PEUR PANIQUE *(Scary Face)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
 - **Effet** : Applique **Effroi** : l'ennemi passe son prochain tour. S'épuise.
 - **Effet+** : Ne s'épuise plus.
@@ -173,7 +173,7 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 #### TRANCHE *(Slash)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
 - **Effet** : Inflige **8** dégâts. Taux de **Critique élevé** (40% → ×1.75).
-- **Effet+** : Inflige **10** dégâts. Critique à **55%**.
+- **Effet+** : Inflige **9** dégâts. Critique à **55%**.
 - **Synergies** : Danse-Lames, Archétype Critique
 - **Note** : L'attaque critique signature de Salamèche. Avec Danse-Lames, les critiques deviennent monstrueux.
 
@@ -181,8 +181,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### COUP DE GRIFFE *(Fury Swipes)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Inflige **3 dégâts × 4 fois**. Chaque hit a une chance de critique indépendante (20%).
-- **Effet+** : **4 × 4** dégâts. Critique à 30%.
+- **Effet** : Inflige **2 dégâts × 4 fois**. Chaque hit a une chance de critique indépendante (20%).
+- **Effet+** : **3 × 4** dégâts. Critique à 30%.
 - **Synergies** : Archétype Critique, Feu Follet (chaque hit peut déclencher effets secondaires futurs)
 - **Note** : Multi-hits avec critiques indépendants. Peut faire x1.75 sur 4 hits si combo parfait.
 
@@ -191,7 +191,7 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 #### TAILLADE *(Cut — move universel Pokémon)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Commune
 - **Effet** : Inflige **8** dégâts. Si c'est un **Coup Critique**, gagne **1 Fureur**.
-- **Effet+** : Inflige **10** dégâts. Critique → **2 Fureur**.
+- **Effet+** : Inflige **9** dégâts. Critique → **2 Fureur**.
 - **Synergies** : Lien Critique-Fureur, Danse-Lames pour augmenter la chance de crit
 - **Note** : La carte qui connecte les archétypes Critique et Fureur. Un crit = plus de rage = plus de dégâts.
 
@@ -221,8 +221,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### RUGISSEMENT DU DRAGON *(Dragon Rage)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Commune
-- **Effet** : Inflige **15 dégâts fixes** (ignore la Défense).
-- **Effet+** : Inflige **20 dégâts fixes**.
+- **Effet** : Inflige **13 dégâts fixes** (ignore la Défense).
+- **Effet+** : Inflige **16 dégâts fixes**.
 - **Synergies** : Contre les ennemis avec beaucoup de Défense, Archétype Dragon
 - **Note** : Unique : ignore la défense. Parfait contre les ennemis qui se blindent.
 
@@ -231,7 +231,7 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 #### GRIFFE DRAGON *(Dragon Claw)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Commune
 - **Effet** : Inflige **14** dégâts.
-- **Effet+** : Inflige **18** dégâts.
+- **Effet+** : Inflige **16** dégâts.
 - **Synergies** : Archétype Dragon (réduit coût des prochaines cartes Dragon), Force Soleil... non, Furie Dragon
 - **Note** : Attaque Dragon de base, coûteuse mais puissante. Prépare les combos Dragon.
 
@@ -243,8 +243,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### ESQUIVE *(Agility)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Gagne **8 Défense**.
-- **Effet+** : Gagne **11 Défense**.
+- **Effet** : Gagne **7 Défense**.
+- **Effet+** : Gagne **10 Défense**.
 - **Synergies** : Archétype Fureur (survivre pour stacker), Bélier/Damoclès (compenser le recul)
 - **Note** : Défense de base. Pas un personnage défensif mais il faut survivre pour brûler.
 
@@ -252,8 +252,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### RÉCUPÉRATION *(Recover — move universel)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Récupère **8 PV**.
-- **Effet+** : Récupère **12 PV**.
+- **Effet** : Récupère **7 PV**.
+- **Effet+** : Récupère **10 PV**.
 - **Synergies** : Bélier, Flammèche (recoil), Archétype Fureur
 - **Note** : Soin basique. Compense les dégâts de recul des cartes agressives.
 
@@ -276,8 +276,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### LANCE-FLAMMES *(Flamethrower)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **16** dégâts. Si l'ennemi est **brûlé** : inflige **22** dégâts.
-- **Effet+** : **19** / **26** dégâts.
+- **Effet** : Inflige **13** dégâts. Si l'ennemi est **brûlé** : inflige **20** dégâts.
+- **Effet+** : **16** / **24** dégâts.
 - **Synergies** : Feu Follet, Braise (pour garantir la Brûlure avant)
 - **Note** : L'attaque Feu signature. Le finisher de l'archétype Brûlure. Toujours jouer après avoir appliqué la Brûlure.
 
@@ -303,8 +303,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### FLAMMÈCHE *(Flare Blitz)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **22** dégâts. Vous subissez **6** dégâts (recul). Applique automatiquement **Brûlure** à l'ennemi.
-- **Effet+** : Inflige **26** dégâts. Recul réduit à **3**.
+- **Effet** : Inflige **20** dégâts. Vous subissez **6** dégâts (recul). Applique automatiquement **Brûlure** à l'ennemi.
+- **Effet+** : Inflige **24** dégâts. Recul réduit à **3**.
 - **Synergies** : Récupération, Archétype Fureur (recul = +Fureur), Ténacité
 - **Note** : Attaque Feu la plus puissante avec recul. Dans l'archétype Fureur, les dégâts reçus sont un avantage.
 
@@ -352,8 +352,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### FORCE BRUTE *(Superpower — move Pokémon)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **20** dégâts. Réduit votre **Force** de 1.
-- **Effet+** : Inflige **24** dégâts. Ne réduit plus la Force.
+- **Effet** : Inflige **12** dégâts. Réduit votre **Force** de 1.
+- **Effet+** : Inflige **16** dégâts. Ne réduit plus la Force.
 - **Synergies** : Danse-Lames (récupérer la Force perdue), Archétype Fureur
 - **Note** : Grosse attaque à coût personnel. Améliorée = carte excellente sans inconvénient.
 
@@ -365,8 +365,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### CHARGE SAUVAGE *(Wild Charge — move Pokémon)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Peu Commune
-- **Effet** : Inflige **12** dégâts. Si c'est un **Coup Critique** : vous récupérez **8 PV**.
-- **Effet+** : Inflige **14** dégâts. Récupère **12 PV** sur crit.
+- **Effet** : Inflige **8** dégâts. Si c'est un **Coup Critique** : vous récupérez **8 PV**.
+- **Effet+** : Inflige **9** dégâts. Récupère **12 PV** sur crit.
 - **Synergies** : Archétype Critique, Danse-Lames
 - **Note** : Le crit devient aussi un soin. Rend le deck critique plus durable.
 
@@ -392,8 +392,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### CONTRE-ATTAQUE *(Retaliate — move Pokémon)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Peu Commune
-- **Effet** : Inflige **8** dégâts. Si vous avez subi des dégâts **ce tour** : c'est automatiquement un **Coup Critique**.
-- **Effet+** : Inflige **11** dégâts. Crit garanti si blessé.
+- **Effet** : Inflige **7** dégâts. Si vous avez subi des dégâts **ce tour** : c'est automatiquement un **Coup Critique**.
+- **Effet+** : Inflige **9** dégâts. Crit garanti si blessé.
 - **Synergies** : Archétype Fureur (prendre des coups intentionnellement), Flammèche
 - **Note** : Garantit un crit si l'ennemi vous a touché ce tour. Symbole de la revanche.
 
@@ -402,7 +402,7 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 #### TRANCHE CROISÉE *(Cross Chop — move Pokémon)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
 - **Effet** : Inflige **16** dégâts. Taux de Critique très élevé (60%).
-- **Effet+** : Inflige **19** dégâts. Critique à **75%**.
+- **Effet+** : Inflige **18** dégâts. Critique à **75%**.
 - **Synergies** : Acuité (critique quasi-certaine), Danse-Lames
 - **Note** : L'attaque à plus haute chance de critique du jeu. Avec Acuité + Tranche Croisée = crit à 95%+.
 
@@ -414,8 +414,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### DRACOGRIFFE *(Dragon Claw améliorée — évolution du move)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **18** dégâts. Si vous avez joué **une autre carte Dragon ce combat** : inflige **24** dégâts.
-- **Effet+** : **22** / **30** dégâts.
+- **Effet** : Inflige **13** dégâts. Si vous avez joué **une autre carte Dragon ce combat** : inflige **22** dégâts.
+- **Effet+** : **16** / **24** dégâts.
 - **Synergies** : Rugissement du Dragon, Archétype Dragon
 - **Note** : Gagne en puissance si le deck Dragon est cohérent.
 
@@ -423,7 +423,7 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### SOUFFLE DRAGON *(Dragon Breath — move Pokémon)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **12** dégâts. **40%** de chance de **Paralyser** l'ennemi (passe son tour).
+- **Effet** : Inflige **13** dégâts. **40%** de chance de **Paralyser** l'ennemi (passe son tour).
 - **Effet+** : Inflige **15** dégâts. Paralysie à **60%**.
 - **Synergies** : Lance-Flammes (profiter du tour de paralysie), Archétype Dragon
 - **Note** : Attaque Dragon avec contrôle. Le temps libre de la paralysie = jouer un Lance-Flammes sans riposter.
@@ -456,17 +456,17 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### DÉFLAGRATION *(Overheat — move Pokémon)*
 - **Type** : Attaque | **Coût** : 3 | **Rareté** : Rare
-- **Effet** : Inflige **32** dégâts. Si l'ennemi est **brûlé** : inflige **44** dégâts. Réduit votre **Force** de 2.
-- **Effet+** : Coût réduit à **2**. Réduit Force de 1.
+- **Effet** : Inflige **22** dégâts. Si l'ennemi est **brûlé** : inflige **32** dégâts. Réduit votre **Force** de 2.
+- **Effet+** : Coût réduit à **2**. Inflige **16** dégâts. Si brûlé : **24** dégâts. Réduit Force de **1**.
 - **Synergies** : Feu Follet → Déflagration (combo en 2 cartes), Danse-Lames (récupérer Force)
-- **Note** : La plus grosse attaque du jeu. Avec Brûlure active = 44 dégâts en un coup. Coût en Force = gestion stratégique.
+- **Note** : La plus grosse attaque du jeu. Avec Brûlure active = 32 dégâts en un coup. Coût en Force = gestion stratégique.
 
 ---
 
 #### PYROBOMBE *(Fire Blast)*
 - **Type** : Attaque | **Coût** : 3 | **Rareté** : Rare
 - **Effet** : Inflige **28** dégâts. Applique **Brûlure Intense** automatiquement. **15%** de chance de rater.
-- **Effet+** : Ne peut plus rater. Inflige **30** dégâts.
+- **Effet+** : Ne peut plus rater. Inflige **28** dégâts.
 - **Synergies** : Intensification, Lance-Flammes (enchaîner le lendemain)
 - **Note** : Grosse attaque + Brûlure Intense d'un coup. Risque de rater non améliorée = tension.
 
@@ -474,10 +474,10 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### CHALEUR INFERNALE *(Heat Wave — move Pokémon)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Rare
-- **Effet** : Inflige **14** dégâts. Si l'ennemi a une **Brûlure Intense** : inflige **14** dégâts **supplémentaires** et récupère **10 PV**.
-- **Effet+** : **18** dégâts + **18** bonus + **14 PV**.
+- **Effet** : Inflige **13** dégâts. Si l'ennemi a une **Brûlure Intense** : inflige **11** dégâts **supplémentaires** et récupère **8 PV**.
+- **Effet+** : **15** dégâts + **13** bonus + **12 PV**.
 - **Synergies** : Intensification → Chaleur Infernale (combo 3 cartes)
-- **Note** : Récompense massivement la préparation. Feu Follet → Intensification → Chaleur Infernale = environ 40 dégâts + soin.
+- **Note** : Récompense massivement la préparation. Feu Follet → Intensification → Chaleur Infernale = environ 24 dégâts + soin.
 
 ---
 
@@ -545,10 +545,10 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### LANCE-SOLEIL ARDENT *(Blast Burn — move exclusif évolution de Feu)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Rare
-- **Effet** : **Ce tour** : entre en Chargement. **Au début du prochain tour** : inflige **34 dégâts** automatiquement. C'est un **Coup Critique** si l'ennemi est brûlé.
-- **Effet+** : Inflige **40 dégâts**.
+- **Effet** : **Ce tour** : entre en Chargement. **Au début du prochain tour** : inflige **28 dégâts** automatiquement. C'est un **Coup Critique** si l'ennemi est brûlé.
+- **Effet+** : Inflige **32 dégâts**.
 - **Synergies** : Feu Follet (brûler avant de charger), Peur Panique (prendre un tour libre pour charger)
-- **Note** : Équivalent Lance-Soleil mais Feu. Avec Brûlure = crit garanti = 40 × 1.75 = 70 dégâts.
+- **Note** : Équivalent Lance-Soleil mais Feu. Avec Brûlure = crit garanti = 28 × 1.75 = 49 dégâts.
 
 ---
 
@@ -567,8 +567,8 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 
 #### DRACO-MÉTÉORE *(Draco Meteor — move Dragon ultime)*
 - **Type** : Attaque | **Coût** : 3 | **Rareté** : Rare
-- **Effet** : Inflige **38** dégâts. Réduit votre **Fureur** de 5.
-- **Effet+** : Inflige **44** dégâts. Réduit Fureur de 3.
+- **Effet** : Inflige **30** dégâts. Réduit votre **Fureur** de 5.
+- **Effet+** : Inflige **36** dégâts. Réduit Fureur de 3.
 - **Synergies** : Archétype Dragon pur, Danse du Dragon (pour coût réduit)
 - **Note** : Le plus gros coup du jeu. La pénalité sur la Fureur oblige un choix stratégique.
 
@@ -607,7 +607,7 @@ Son gameplay repose sur l'**accumulation de puissance à travers le combat lui-m
 ```
 Feu Follet → Intensification → Déflagration
 ```
-**Résultat** : Brûlure garantie → Brûlure Intense (4/tour) → Déflagration profite de la Brûlure = **44 dégâts**. Tout en 3 cartes, 4 énergie.
+**Résultat** : Brûlure garantie → Brûlure Intense (4/tour) → Déflagration profite de la Brûlure = **24 dégâts**. Tout en 3 cartes, 4 énergie.
 
 ---
 
@@ -623,7 +623,7 @@ Rage (Pouvoir) → Flammèche × 3 → Explosivité
 ```
 Danse-Lames × 2 → Acuité → Tranche Croisée
 ```
-**Résultat** : +4 Force + Critique à 95%. Tranche Croisée = **(19 + 4) × 1.75 = 40 dégâts** quasi-certains en un coup.
+**Résultat** : +4 Force + Critique à 95%. Tranche Croisée = **(18 + 4) × 1.75 = 38 dégâts** quasi-certains en un coup.
 
 ---
 
@@ -631,7 +631,7 @@ Danse-Lames × 2 → Acuité → Tranche Croisée
 ```
 Danse du Dragon → Dents de Dragon → Dracogriffe → Draco-Météore
 ```
-**Résultat** : Dragon Dance réduit les coûts, Dents trouve les cartes Dragon, Dracogriffe profite d'une carte Dragon précédente, Draco-Météore à coût réduit = **44 dégâts** pour 2-3 énergie.
+**Résultat** : Dragon Dance réduit les coûts, Dents trouve les cartes Dragon, Dracogriffe profite d'une carte Dragon précédente, Draco-Météore à coût réduit = **30 dégâts** pour 2-3 énergie.
 
 ---
 

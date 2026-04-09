@@ -61,10 +61,10 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 | # | Nom | Type | Coût | Effet | Effet+ | Archétype |
 |---|-----|------|------|-------|--------|-----------|
-| 1 | **Charge** ×4 | Attaque | 1 | Inflige **8** dégâts | Inflige **10** dégâts | Universel |
-| 2 | **Repli** ×4 | Compétence | 1 | Gagne **8** Défense + **4** Carapace | Gagne **10** Défense + **5** Carapace | Carapace |
-| 3 | **Pistolet à O** | Attaque | 1 | Inflige **6** dégâts. Active **Flux** | Inflige **8** dégâts | Flux |
-| 4 | **Queue en Vrille** | Compétence | 1 | Réduit la Défense de l'ennemi de **8** | Réduit de **12** | Débuff |
+| 1 | **Charge** ×4 | Attaque | 1 | Inflige **6** dégâts | Inflige **9** dégâts | Universel |
+| 2 | **Repli** ×4 | Compétence | 1 | Gagne **6** Défense + **3** Carapace | Gagne **9** Défense + **5** Carapace | Carapace |
+| 3 | **Pistolet à O** | Attaque | 1 | Inflige **5** dégâts. Active **Flux** | Inflige **8** dégâts. Active **Flux** | Flux |
+| 4 | **Queue en Vrille** | Compétence | 1 | Réduit la Défense de l'ennemi de **6** | Réduit de **10** | Débuff |
 
 ---
 
@@ -76,8 +76,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### REPLI *(Withdraw)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Gagne **10 Défense**. Gagne **5 Carapace**.
-- **Effet+** : Gagne **13 Défense**. Gagne **7 Carapace**.
+- **Effet** : Gagne **8 Défense**. Gagne **4 Carapace**.
+- **Effet+** : Gagne **11 Défense**. Gagne **6 Carapace**.
 - **Synergies** : Coud'Krane, Bouclier Éclat, tout l'archétype Carapace
 - **Note** : Carte pivot de l'archétype. Génère directement les deux ressources clés.
 
@@ -103,8 +103,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### PROTECTION *(Protect)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Gagne **14 Défense**. S'épuise.
-- **Effet+** : Gagne **18 Défense**. Ne s'épuise plus.
+- **Effet** : Gagne **8 Défense**. S'épuise.
+- **Effet+** : Gagne **11 Défense**. Ne s'épuise plus.
 - **Synergies** : Coud'Krane (charger pendant qu'on se protège), Élan (jouer avant d'autres cartes)
 - **Note** : Gros bloc en urgence. Le plus haut montant de Défense d'une Commune.
 
@@ -144,7 +144,7 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 #### AQUA-JET *(Aqua Jet)*
 - **Type** : Attaque | **Coût** : 0 | **Rareté** : Commune
 - **Effet** : Inflige **5** dégâts. **Priorité** (toujours joué en premier ce tour). Maintient le **Flux** actif.
-- **Effet+** : Inflige **7** dégâts.
+- **Effet+** : Inflige **6** dégâts.
 - **Synergies** : Flux (l'entretenir gratuitement), Builds qui veulent finir vite
 - **Note** : Carte gratuite qui entretient le Flux sans coût. Très précieuse dans le mid-game.
 
@@ -152,8 +152,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### CASCADE *(Waterfall)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Commune
-- **Effet** : Inflige **14** dégâts. Si **Flux est actif** : inflige **19** dégâts.
-- **Effet+** : **16** / **22** dégâts.
+- **Effet** : Inflige **12** dégâts. Si **Flux est actif** : inflige **17** dégâts.
+- **Effet+** : **15** / **20** dégâts.
 - **Synergies** : Pistolet à O → Cascade (combo de base du Flux), Aqua-Jet
 - **Note** : Le premier vrai finisher du Flux. Pistolet à O active le Flux, Cascade explose dessus.
 
@@ -192,10 +192,10 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### SURF *(Surf)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Commune
-- **Effet** : Inflige **13** dégâts. Si c'est **la 3e carte jouée ce tour ou plus** : inflige **18** dégâts.
-- **Effet+** : **15** / **21** dégâts.
+- **Effet** : Inflige **12** dégâts. Si c'est **la 3e carte jouée ce tour ou plus** : inflige **17** dégâts.
+- **Effet+** : **14** / **20** dégâts.
 - **Synergies** : Archétype Élan, Aqua-Jet (carte 0 pour atteindre le seuil)
-- **Note** : Récompense de jouer beaucoup de cartes dans le même tour. Un deck rapide la joue toujours à 21.
+- **Note** : Récompense de jouer beaucoup de cartes dans le même tour. Un deck rapide la joue toujours à 20.
 
 ---
 
@@ -210,8 +210,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### QUEUE EN VRILLE *(Tail Whip)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Réduit la **Défense** de l'ennemi de **10** ce tour. Si **Élan ≥ 2** : réduit de **16**.
-- **Effet+** : Réduit de **12** / **20**.
+- **Effet** : Réduit la **Défense** de l'ennemi de **8** ce tour. Si **Élan ≥ 2** : réduit de **13**.
+- **Effet+** : Réduit de **10** / **16**.
 - **Synergies** : Élan (jouer après 2 cartes), Hydrocanon, Cascade
 - **Note** : Prépare un burst aquatique. Idéale en milieu de tour après avoir établi l'Élan.
 
@@ -254,8 +254,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### RÉCUPÉRATION *(Recover)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Commune
-- **Effet** : Récupère **8 PV**.
-- **Effet+** : Récupère **12 PV**.
+- **Effet** : Récupère **7 PV**.
+- **Effet+** : Récupère **10 PV**.
 - **Synergies** : Tous les archétypes (sustain général)
 - **Note** : Soin basique indispensable pour le tank.
 
@@ -327,8 +327,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### HYDROCANON *(Hydro Pump)*
 - **Type** : Attaque | **Coût** : 3 | **Rareté** : Peu Commune
-- **Effet** : Inflige **24** dégâts. Si **Flux est actif** : inflige **30** dégâts. **15%** de chance de rater.
-- **Effet+** : Ne peut plus rater. **26** / **33** dégâts.
+- **Effet** : Inflige **22** dégâts. Si **Flux est actif** : inflige **28** dégâts. **15%** de chance de rater.
+- **Effet+** : Ne peut plus rater. **24** / **30** dégâts.
 - **Synergies** : Pistolet à O → Hydrocanon (combo essentiel du Flux)
 - **Note** : La plus grosse attaque Eau. Le finisher absolu du Flux. Risque de rater non améliorée = gestion.
 
@@ -336,8 +336,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### AQUA QUEUE *(Aqua Tail)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **17** dégâts. Maintient le **Flux actif** pour ce tour ET le prochain.
-- **Effet+** : Inflige **21** dégâts.
+- **Effet** : Inflige **14** dégâts. Maintient le **Flux actif** pour ce tour ET le prochain.
+- **Effet+** : Inflige **17** dégâts.
 - **Synergies** : Hydrocanon (Flux garanti pour le lendemain), Cascade
 - **Note** : Assure la persistance du Flux sur 2 tours. Joué le soir avant Hydrocanon = parfait.
 
@@ -346,7 +346,7 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 #### VAGUE SCINTILLANTE *(Scald — move Pokémon)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
 - **Effet** : Inflige **13** dégâts. **40%** de chance d'appliquer **Brûlure** à l'ennemi. Active **Flux**.
-- **Effet+** : Inflige **16** dégâts. Brûlure à **60%**.
+- **Effet+** : Inflige **15** dégâts. Brûlure à **60%**.
 - **Synergies** : Hybride Eau/Feu, Cascade (profiter de la Brûlure aussi)
 - **Note** : Unique : attaque Eau qui peut brûler. Synergise avec les rares Eau+Brûlure et crée un archétype hybride.
 
@@ -395,7 +395,7 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 #### CYCLONE *(Whirlwind — move Pokémon)*
 - **Type** : Compétence | **Coût** : 1 | **Rareté** : Peu Commune
 - **Effet** : Si **Élan ≥ 3** : inflige **12** dégâts et applique **Confusion**. Sinon : inflige seulement **5** dégâts.
-- **Effet+** : Élan ≥ 2 suffit. **15** dégâts + Confusion.
+- **Effet+** : Élan ≥ 2 suffit. **13** dégâts + Confusion.
 - **Synergies** : Spirale, Aqua-Jet (atteindre l'Élan requis), Archétype Tourbillon
 - **Note** : Carte conditionnelle puissante. Dans l'archétype Élan, la condition est presque toujours remplie.
 
@@ -416,8 +416,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### AVALANCHE *(Avalanche — move Pokémon)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Peu Commune
-- **Effet** : Inflige **12** dégâts. Si vous avez subi des dégâts **ce tour** : inflige **22** dégâts à la place.
-- **Effet+** : **14** / **26** dégâts.
+- **Effet** : Inflige **13** dégâts. Si vous avez subi des dégâts **ce tour** : inflige **22** dégâts à la place.
+- **Effet+** : **14** / **24** dégâts.
 - **Synergies** : Builds tank (encaisser un coup ce tour), Armure Aqueuse
 - **Note** : Contre-attaque. Laisser l'ennemi frapper en premier, puis Avalanche = dégâts doublés.
 
@@ -434,10 +434,10 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### GIVRAGE *(Frost Breath — move Pokémon)*
 - **Type** : Attaque | **Coût** : 1 | **Rareté** : Peu Commune
-- **Effet** : Inflige **8** dégâts. Si l'ennemi est **gelé** : c'est automatiquement un **Coup Critique** (×1.75).
-- **Effet+** : Inflige **10** dégâts.
+- **Effet** : Inflige **7** dégâts. Si l'ennemi est **gelé** : c'est automatiquement un **Coup Critique** (×1.75).
+- **Effet+** : Inflige **9** dégâts.
 - **Synergies** : Rayon Glace (geler d'abord), Blizzard, Gel garanti
-- **Note** : Critique automatique sur ennemi gelé. Gel → Givrage = 10 × 1.75 = 17 dégâts pour 1 énergie.
+- **Note** : Critique automatique sur ennemi gelé. Gel → Givrage = 9 × 1.75 = 16 dégâts pour 1 énergie.
 
 ---
 
@@ -498,17 +498,17 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### HYDROCANON ULTIME *(Hydro Cannon — move exclusif évolution Eau)*
 - **Type** : Attaque | **Coût** : 3 | **Rareté** : Rare
-- **Effet** : Inflige **36** dégâts si **Flux est actif**. Ce tour, le Flux **ne peut pas s'éteindre**. Entre en **Rechargement** (passe le prochain tour à récupérer).
-- **Effet+** : Inflige **42** dégâts. Pas de Rechargement.
+- **Effet** : Inflige **28** dégâts si **Flux est actif**. Ce tour, le Flux **ne peut pas s'éteindre**. Entre en **Rechargement** (passe le prochain tour à récupérer).
+- **Effet+** : Inflige **34** dégâts. Pas de Rechargement.
 - **Synergies** : Blastoise (coût réduit à 2), Aqua Queue (Flux garanti)
-- **Note** : L'attaque ultime. Avec Blastoise = 42 dégâts pour 2 énergie. Le Rechargement est le prix de la puissance absolue.
+- **Note** : L'attaque ultime. Avec Blastoise = 39 dégâts pour 2 énergie. Le Rechargement est le prix de la puissance absolue.
 
 ---
 
 #### ÉBULLITION *(Steam Eruption — move Pokémon)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Rare
-- **Effet** : Inflige **18** dégâts. Applique **Mouillé** + **Brûlure** simultanément. Active **Flux**.
-- **Effet+** : Inflige **22** dégâts.
+- **Effet** : Inflige **15** dégâts. Applique **Mouillé** + **Brûlure** simultanément. Active **Flux**.
+- **Effet+** : Inflige **19** dégâts.
 - **Synergies** : Blizzard (Mouillé → Gel garanti), Vague Scintillante (double Brûlure)
 - **Note** : Carte hybride absolue Eau/Feu/Glace. Prépare un Blizzard garanti le tour suivant.
 
@@ -547,8 +547,8 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### GRAND TOURBILLON *(Grand Cyclone — référence univers)*
 - **Type** : Attaque | **Coût** : 3 | **Rareté** : Rare
-- **Effet** : Inflige **(Élan × 5) + 8** dégâts. Applique **Confusion** à l'ennemi. Remet **l'Élan à 3** (pas à 0).
-- **Effet+** : **(Élan × 6) + 8** dégâts. Élan revient à **5**.
+- **Effet** : Inflige **(Élan × 4) + 8** dégâts. Applique **Confusion** à l'ennemi. Remet **l'Élan à 3** (pas à 0).
+- **Effet+** : **(Élan × 5) + 8** dégâts. Élan revient à **5**.
 - **Synergies** : Spirale Infinie (Élan énorme accumulé), Maelström
 - **Note** : Le finisher Élan ultime. Contrairement à Flot Déchaîné, il conserve de l'Élan après pour continuer.
 
@@ -570,7 +570,7 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 #### TEMPÊTE GLACIALE *(Ice Storm — concept univers)*
 - **Type** : Attaque | **Coût** : 3 | **Rareté** : Rare
 - **Effet** : Inflige **20** dégâts. Applique **Gel Profond** (2 tours). Si la **Grêle est active** : inflige **28** dégâts.
-- **Effet+** : **24** / **34** dégâts.
+- **Effet+** : **24** / **30** dégâts.
 - **Synergies** : Grêle → Tempête Glaciale (condition remplie + Gel Profond)
 - **Note** : 2 tours de l'ennemi gelé = 2 tours libres pour préparer l'arsenal.
 
@@ -596,10 +596,10 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 
 #### BLASTOISE GLACE *(Blastoise Ice Cannon — référence lore/FRLG)*
 - **Type** : Attaque | **Coût** : 2 | **Rareté** : Rare
-- **Effet** : Inflige **16** dégâts. Si l'ennemi est **gelé ET mouillé** : inflige **30** dégâts et le **Gel Profond** s'applique automatiquement.
-- **Effet+** : **20** / **36** dégâts.
+- **Effet** : Inflige **14** dégâts. Si l'ennemi est **gelé ET mouillé** : inflige **26** dégâts et le **Gel Profond** s'applique automatiquement.
+- **Effet+** : **16** / **30** dégâts.
 - **Synergies** : Marée Montante (Mouillé) + Rayon Glace (Gel) → Blastoise Glace
-- **Note** : Nécessite de préparer 2 statuts mais la récompense est massive. 36 dégâts + Gel Profond = combo létale en 3 cartes.
+- **Note** : Nécessite de préparer 2 statuts mais la récompense est massive. 30 dégâts + Gel Profond = combo létale en 3 cartes.
 
 ---
 
@@ -609,7 +609,7 @@ Sa philosophie est celle d'une tortue : **défense = attaque**.
 ```
 Repli → Repli → Coud'Krane (Tour 1) → Bouclier Éclat (Tour 2, auto-déclenche)
 ```
-**Résultat** : 2 × Repli = 26 Défense + 14 Carapace. Coud'Krane charge + 10 Défense + 5 Carapace. Au Tour 2 : Coud'Krane frappe pour 22 + Bouclier Éclat pour 19 (Carapace = 19). **Total : 41 dégâts + tank absolu**.
+**Résultat** : 2 × Repli = 16 Défense + 8 Carapace. Coud'Krane charge + 10 Défense + 11 Carapace. Au Tour 2 : Coud'Krane frappe pour 22 + Bouclier Éclat pour 19 (Carapace = 19). **Total : 41 dégâts + tank absolu**.
 
 ---
 
@@ -617,7 +617,7 @@ Repli → Repli → Coud'Krane (Tour 1) → Bouclier Éclat (Tour 2, auto-décle
 ```
 Pistolet à O → Aqua Queue → Hydrocanon (Tour suivant avec Flux garanti)
 ```
-**Résultat** : Flux actif → Aqua Queue maintient Flux pour demain → Hydrocanon à **30 dégâts**. Avec Blastoise = 35 dégâts pour 2 énergie.
+**Résultat** : Flux actif → Aqua Queue maintient Flux pour demain → Hydrocanon à **28 dégâts**. Avec Blastoise = 33 dégâts pour 2 énergie.
 
 ---
 
@@ -633,7 +633,7 @@ Spirale Infinie (Pouvoir) → Spirale × 2 → Maelström → Flot Déchaîné
 ```
 Marée Montante → Blizzard → Verglas → Givrage × 2
 ```
-**Résultat** : Mouillé → Blizzard Gel Profond garanti (2 tours) → Verglas (Gel ne se brise plus) → 2× Givrage critique = **17 × 2 = 34 dégâts** sans contre possible.
+**Résultat** : Mouillé → Blizzard Gel Profond garanti (2 tours) → Verglas (Gel ne se brise plus) → 2× Givrage critique = **12 × 2 = 24 dégâts** sans contre possible.
 
 ---
 
@@ -649,7 +649,7 @@ Carapace Absolue → Armure Aqueuse × 5 tours → Bouclier Éclat → Mégapuis
 ```
 Carapace Brisée → Blastoise → Hydrocanon Ultime
 ```
-**Résultat** : Carapace Brisée double le prochain Hydrocanon. Blastoise réduit son coût à 2. Hydrocanon Ultime = **42 × 2 = 84 dégâts pour 2 énergie**. Le combo le plus risqué et le plus puissant du jeu.
+**Résultat** : Carapace Brisée double le prochain Hydrocanon. Blastoise réduit son coût à 2. Hydrocanon Ultime = **34 × 2 = 68 dégâts pour 2 énergie**. Le combo le plus risqué et le plus puissant du jeu.
 
 ---
 
